@@ -286,6 +286,64 @@
 (use-package ob-restclient
   :ensure t)
 
+;; Eshell stuff
+(use-package exec-path-from-shell
+  :ensure t
+  :defer 0.1
+  :config
+  (exec-path-from-shell-initialize))
+
+(use-package bash-completion
+  :commands bash-completion-dynamic-complete
+  :hook
+  (bash-completion-dynamic-complete . shell-dynamic-complete-functions)
+  :init
+  (setq fish-completion-fallback-on-bash-p t))
+
+(use-package esh-help
+  :ensure t
+  :defer t
+  :config
+  (setup-esh-help-eldoc))
+
+(use-package em-term
+  :ensure nil
+  :custom
+  ;; Visual commands are commands which require a proper terminal.
+  ;; eshell will run them in a term buffer when you invoke them.
+  (eshell-visual-commands
+   '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
+  (eshell-visual-subcommands
+   '(("git" "log" "l" "diff" "show"))))
+
+(use-package esh-autosuggest
+  :ensure t
+  :hook (eshell-mode . esh-autosuggest-mode))
+
+(use-package eshell-fringe-status
+  :ensure t
+  :hook
+  (eshell-mode . eshell-fringe-status-mode))
+
+(use-package eshell-git-prompt
+  :ensure t
+  :config
+  (eshell-git-prompt-use-theme 'powerline))
+
+;; (use-package eshell-prompt-extras
+;;   :ensure t
+;;   :after esh-opt
+;;   :custom
+;;   (eshell-prompt-function #'epe-theme-dakrone))
+
+(use-package eshell-toggle
+  :ensure t
+  :custom
+  (eshell-toggle-use-projectile-root t)
+  (eshell-toggle-run-command nil)
+  :bind
+  ("M-`" . eshell-toggle))
+
 ;; Elisp stuff
 (use-package eros
   :ensure t
@@ -436,7 +494,7 @@
   :custom
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-;; Projjectile
+;; Projectile
 (use-package projectile
   :ensure t
   :demand t
