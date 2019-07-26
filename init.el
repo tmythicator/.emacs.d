@@ -99,11 +99,6 @@
   (mode-require-final-newline nil)
   (require-final-newline nil))
 
-
-;; (use-package abap
-;;   :quelpa
-;;   (abap :repo "qianmarv/ABAPInEmacs" :fetcher github))
-
 (use-package autorevert
   :diminish auto-revert-mode)
 
@@ -381,16 +376,6 @@
   :hook
   (after-init . global-company-mode))
 
-
-
-;; (use-package company-emoji
-;;   :ensure t
-;;   :after company
-;;   :defer t
-;;   :config
-;;   (lambda () (company-emoji-init))
-;;   (add-to-list 'company-backends 'company-emoji))
-
 ;; Flycheck
 (use-package flycheck
   :ensure t
@@ -440,8 +425,6 @@
   :ensure t
   :bind
   ([remap zap-to-char] . avy-zap-to-char))
-
-
 
 (use-package ace-jump-buffer
   :ensure t
@@ -690,10 +673,6 @@
   :ensure t
   :config
   (load-theme 'sanityinc-tomorrow-night t))
-
-;;test
-;;(use-package undo-tree
-;;  :ensure t)
 
 ;; Lighter theme
 ;; (use-package silkworm-theme
