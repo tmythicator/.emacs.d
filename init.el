@@ -732,6 +732,8 @@
   :ensure t
   :custom
   (doom-modeline-height 5)
+  (doom-modeline-icon t)
+  (doom-modeline-major-mode-color-icon t)
   :hook (after-init . doom-modeline-mode))
 
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
