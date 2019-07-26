@@ -286,6 +286,11 @@
 (use-package ob-restclient
   :ensure t)
 
+;; Commenting
+(use-package smart-comment
+  :ensure t
+  :bind ("M-;" . smart-comment))
+
 ;; Eshell stuff
 (use-package exec-path-from-shell
   :ensure t
