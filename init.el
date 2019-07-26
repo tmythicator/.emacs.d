@@ -242,7 +242,7 @@
     (switch-to-buffer "*dashboard*"))
 
   (defun initiate-hvatit ()
-    "Stops corgmacs theme"
+    "Stops the dashboard theme"
     (interactive)
     (my/play-media (concat user-emacs-directory "dashboard/dashboard-enough.mp3") t)
     (shell-command "pkill -f dashboard-theme.mp3"))
@@ -253,8 +253,6 @@
     (my/play-media (concat user-emacs-directory "dashboard/dashboard-theme.mp3") t))
 
   :custom
-  (dashboard-banner-logo-title "Welcome to Corg'macs!")
-  (dashboard-startup-banner (concat user-emacs-directory "dashboard/theme-1.png"))
   (dashboard-items '((recents  . 5)
                      (bookmarks . 5)
                      (projects . 5)
@@ -460,7 +458,7 @@
               (unless (eq ibuffer-sorting-mode 'alphabetic)
                 (ibuffer-do-sort-by-alphabetic)))))
 
-;; Org-mode/PDF stuff
+;; Org-mode/PDF/Markdown stuff
 (use-package org
   ;; to be sure we have latest Org version
   :ensure org-plus-contrib
@@ -551,7 +549,6 @@
   :hook
   (org-mode . org-bullets-mode))
 
-;; PDF tools
 (use-package pdf-tools
   :ensure t
   :mode
@@ -559,13 +556,31 @@
   :config
   (pdf-tools-install))
 
+(use-package markdown-mode
+  :ensure t
+  :commands markdown-mode
+  :mode (("\\.markdown$" . markdown-mode)
+         ("\\.md$" . markdown-mode))
+  :config
+  (add-hook 'markdown-mode-hook 'visual-line-mode))
 
-;; Magit
+;; Git stuff
 (use-package magit
   :ensure t
   :custom
   (magit-completing-read-function 'ivy-completing-read "Force Ivy usage.")
   :bind ("C-x g" . magit-status))
+
+
+(use-package gist
+  :ensure t)
+
+;; Mark uncommitted changes in the fringe.
+(use-package git-gutter-fringe
+  :ensure t
+  :config
+  (global-git-gutter-mode t)
+  :diminish git-gutter-mode)
 
 ;; Elfeed
 (use-package elfeed
