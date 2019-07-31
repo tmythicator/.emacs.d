@@ -62,10 +62,10 @@
   ;; JSON
   (setq-default js-indent-level 2)
   ;; Coffeescript
-  (setq coffee-tab-width 2)
+  (setq-default coffee-tab-width 2)
   ;; Typescript
-  (setq typescript-indent-level 2
-        typescript-expr-indent-offset 2)
+  (setq-default typescript-indent-level 2
+                typescript-expr-indent-offset 2)
   ;; Python
   (setq-default py-indent-offset 2)
   ;; XML
@@ -79,7 +79,6 @@
                 web-mode-style-padding 2
                 web-mode-script-padding 2)
   ;; Custom functions
-
   ;; Hit C-c <tab> to auto-indent the entire buffer you're in.
   (defun indent-buffer ()
     (interactive)
@@ -136,7 +135,13 @@
   :bind
   ("C-z" . nil))
 
-;; Parent + hline
+;; Parentheses + hline
+(use-package smartparens
+  :ensure t
+  :commands smartparens-global-mode
+  :config
+  (smartparens-global-mode 1))
+
 (use-package paren
   :config
   (show-paren-mode t))
@@ -335,17 +340,12 @@
   :config
   (eshell-git-prompt-use-theme 'powerline))
 
-;; (use-package eshell-prompt-extras
-;;   :ensure t
-;;   :after esh-opt
-;;   :custom
-;;   (eshell-prompt-function #'epe-theme-dakrone))
-
 (use-package eshell-toggle
   :ensure t
   :custom
   (eshell-toggle-use-projectile-root t)
   (eshell-toggle-run-command nil)
+  (eshell-toggle-size-fraction 5)
   :bind
   ("M-`" . eshell-toggle))
 
@@ -388,7 +388,6 @@
   :ensure t
   :custom
   (jedi:complete-on-dot t)
-  ;;  (jedi:tooltip-method '(popup))
   :hook
   (python-mode-hook . jedi:setup-function)
   (python-mode-hook . jedi:ac-setup-function))
@@ -634,10 +633,6 @@
   (magit-completing-read-function 'ivy-completing-read "Force Ivy usage.")
   :bind ("C-x g" . magit-status))
 
-
-(use-package gist
-  :ensure t)
-
 ;; Mark uncommitted changes in the fringe.
 (use-package git-gutter-fringe
   :ensure t
@@ -752,6 +747,14 @@
   :config
   (load-theme 'sanityinc-tomorrow-night t))
 
+(use-package doom-modeline
+  :ensure t
+  :custom
+  (doom-modeline-height 5)
+  (doom-modeline-icon t)
+  (doom-modeline-major-mode-color-icon t)
+  :hook (after-init . doom-modeline-mode))
+
 ;; Lighter theme
 ;; (use-package silkworm-theme
 ;;  :ensure t
@@ -791,14 +794,7 @@
 ;;   (nyan-bar-length 16)
 ;;   (nyan-wavy-trail t))
 
-(use-package doom-modeline
-  :ensure t
-  :custom
-  (doom-modeline-height 5)
-  (doom-modeline-icon t)
-  (doom-modeline-major-mode-color-icon t)
-  :hook (after-init . doom-modeline-mode))
-
+;; Transparency
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
 (set-frame-parameter nil 'alpha '(92 . 75))
 (display-time-mode 1)
