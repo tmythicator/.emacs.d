@@ -16,6 +16,7 @@
   (require 'use-package))
 
 (put 'use-package 'lisp-indent-function 1)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 (use-package use-package-core
   :custom
