@@ -1,7 +1,8 @@
 (require 'package)
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-archives
-      `(;;,@package-archives
-        ("gnu" . "http://elpa.gnu.org/packages/") ;; No https :/
+      `(,@package-archives
+        ;;("gnu" . "http://elpa.gnu.org/packages/") ;; No https :/
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
@@ -98,6 +99,13 @@
   (sentence-end-double-space nil)
   (mode-require-final-newline nil)
   (require-final-newline nil))
+
+;; Emacs Window Manager
+;; (use-package exwm
+;;   :ensure t
+;;   :config
+;;   (use-package exwm-config
+;;     :config (exwm-config-default)))
 
 (use-package autorevert
   :diminish auto-revert-mode)
@@ -209,27 +217,16 @@
   :hook
   (prog-mode . rainbow-delimiters-mode))
 
-;; (use-package rainbow-identifiers
-;;   :ensure t
-;;   ;;:custom
-;;   ;;(rainbow-identifiers-cie-l*a*b*-lightness 80)
-;;   ;;(rainbow-identifiers-cie-l*a*b*-saturation 50)
-;;   ;;(rainbow-identifiers-choose-face-function
-;;   ;; #'rainbow-identifiers-cie-l*a*b*-choose-face)
-;;   :hook
-;;   (emacs-lisp-mode . rainbow-identifiers-mode) ; actually, turns it off
-;;   (prog-mode . rainbow-identifiers-mode))
-
 (use-package rainbow-mode
-  ;;   :ensure t
+  :ensure t
   :diminish rainbow-mode
   :hook prog-mode)
 
 ;; Telegram
-(use-package telega
-  :ensure t
-  :defer t
-  :commands (telega))
+;; (use-package telega
+;;   :ensure t
+;;   :defer t
+;;   :commands (telega))
 
 (use-package dashboard
   :ensure t
@@ -799,6 +796,7 @@
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
 (set-frame-parameter nil 'alpha '(92 . 75))
 (display-time-mode 1)
+(fringe-mode 10)
 
 ;; Functions
 (defun my/calc-ml-time (enum etime-sec)
