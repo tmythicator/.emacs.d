@@ -1,8 +1,8 @@
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ;; TLS fix
 (require 'package)
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 (setq package-archives
-      `(,@package-archives
-        ;;("gnu" . "http://elpa.gnu.org/packages/") ;; No https :/
+      `(;;,@package-archives
+        ("gnu" . "https://elpa.gnu.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
@@ -353,6 +353,14 @@
   :hook
   (emacs-lisp-mode . eros-mode))
 
+;; Common Lisp stuff
+(use-package slime
+  :ensure t
+  :custom
+  (inferior-lisp-program "sbcl")
+  (slime-contribs '(slime-fancy))
+  (slime-setup '(slime-company)))
+
 ;; Clojure stuff
 (use-package clojure-mode
   :ensure t
@@ -404,6 +412,10 @@
     (company-quickhelp-mode 1)
     :custom
     (company-quickhelp-delay 3))
+
+  ;; For Common Lisp
+  (use-package slime-company
+    :ensure t)
 
   ;; Add a completion source for emoji. 😸
   (use-package company-emoji
@@ -573,6 +585,7 @@
    'org-babel-load-languages
    '((python . t)
      (shell . t)
+     (java . t)
      (restclient . t)))
 
   (setq org-latex-pdf-process
