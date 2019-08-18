@@ -207,6 +207,12 @@
   :config
   (ivy-rich-mode 1))
 
+(use-package flyspell-correct-ivy
+  :ensure t
+  :bind ("C-M-;" . flyspell-correct-wrapper)
+  :init
+  (setq flyspell-correct-interface #'flyspell-correct-ivy))
+
 (use-package swiper
   :ensure t
   :bind("C-z" . swiper))
@@ -477,6 +483,15 @@
   :bind ("C-c DEL" . shrink-whitespace))
 
 ;; Navigation and thing
+(use-package dumb-jump
+  :ensure t
+  :bind (("M-g o" . dumb-jump-go-other-window)
+         ("M-g j" . dumb-jump-go)
+         ("M-g i" . dumb-jump-go-prompt)
+         ("M-g x" . dumb-jump-go-prefer-external)
+         ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :custom (dumb-jump-selector 'ivy))
+
 (use-package winner
   :config
   (winner-mode 1))
