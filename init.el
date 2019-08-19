@@ -88,6 +88,7 @@
   (global-set-key (kbd "C-c <tab>") 'indent-buffer)
 
   :custom
+  (delete-selection-mode t)
   (scroll-step 1)
   (inhibit-startup-screen t "Don't show splash screen")
   (use-dialog-box nil "Disable dialog boxes")
@@ -780,6 +781,15 @@
   (doom-modeline-icon t)
   (doom-modeline-major-mode-color-icon t)
   :hook (after-init . doom-modeline-mode))
+
+(use-package solaire-mode
+  :ensure t
+  :hook
+  ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+  (minibuffer-setup . solaire-mode-in-minibuffer)
+  :config
+  (solaire-global-mode +1)
+  (solaire-mode-swap-bg))
 
 ;; Lighter theme
 ;; (use-package silkworm-theme
