@@ -575,6 +575,7 @@
         ("M-b" . ace-jump-buffer)))
 
 (use-package ace-window
+  :ensure t
   :bind (("C-x o" . ace-window)
          ("C-x C-o" . ace-swap-window))
   :custom
@@ -594,6 +595,7 @@
 
 ;; Use ibuffer instead of list-buffers (C-x C-b) and sort by project.
 (use-package ibuffer-projectile
+  :ensure t
   :bind ("C-x C-b" . ibuffer)
   :config
   (add-hook 'ibuffer-hook
