@@ -1,8 +1,6 @@
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ;; TLS fix
 (require 'package)
 (setq package-archives
-      `(;;,@package-archives
-        ("gnu" . "https://elpa.gnu.org/packages/")
+      `(("gnu" . "https://elpa.gnu.org/packages/")
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
@@ -139,7 +137,10 @@
 
 (use-package cus-edit
   :custom
-  (custom-file null-device "Don't store customizations"))
+  (custom-file
+   (if (eq system-type 'windows-nt)
+       (locate-user-emacs-file "custom.el")
+     null-device)))
 
 (use-package frame
   :bind
@@ -186,6 +187,7 @@
   ("M-y" . counsel-yank-pop))
 
 (use-package counsel-world-clock
+  :ensure t
   :after counsel)
 
 (use-package ivy
@@ -415,6 +417,7 @@
         ("C-p" . company-select-previous-or-abort))
   :config
   (use-package company-quickhelp
+    :ensure t
     :config
     (company-quickhelp-mode 1)
     :custom
@@ -426,10 +429,12 @@
 
   ;; Add a completion source for emoji. 😸
   (use-package company-emoji
+    :ensure t
     :config
     (company-emoji-init))
 
   (use-package company-shell
+    :ensure t
     :config
     (add-to-list 'company-backends 'company-shell))
 
@@ -463,6 +468,7 @@
                 (flycheck-mode)))))
 
 (use-package flycheck-color-mode-line
+  :ensure t
   :config
   (with-eval-after-load "flycheck"
     (setq flycheck-highlighting-mode 'symbols)
@@ -553,6 +559,7 @@
   :config
   ;; Org-ref
   (use-package org-ref
+    :ensure t
     :init
     (setq reftex-default-bibliography '("~/Bibliography/refs.bib"))
     ;; see org-ref for use of these variables
@@ -577,7 +584,7 @@
           bibtex-autokey-titleword-length 5))
 
   ;; Open PDF with pdfview
-  (use-package org-pdfview)
+  (use-package org-pdfview :ensure t)
   (add-to-list 'org-file-apps
                '("\\.pdf\\'" . (lambda (file link)
                                  (org-pdfview-open link))))
