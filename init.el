@@ -595,7 +595,6 @@
 
 ;; Use ibuffer instead of list-buffers (C-x C-b) and sort by project.
 (use-package ibuffer-projectile
-  :ensure t
   :bind ("C-x C-b" . ibuffer)
   :config
   (add-hook 'ibuffer-hook
