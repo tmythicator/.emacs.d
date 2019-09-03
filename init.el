@@ -324,12 +324,11 @@
   (setup-esh-help-eldoc))
 
 (use-package em-term
-  :ensure nil
   :custom
-  ;; Visual commands are commands which require a proper terminal.
+  ;; Visual commands are commands which require a proper terminal
   ;; eshell will run them in a term buffer when you invoke them.
   (eshell-visual-commands
-   '("less" "tmux" "htop" "top" "bash" "zsh" "fish"))
+   '("tmux" "htop" "top"))
   (eshell-visual-subcommands
    '(("git" "log" "l" "diff" "show"))))
 
