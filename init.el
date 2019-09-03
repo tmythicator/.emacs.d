@@ -342,10 +342,17 @@
   :hook
   (eshell-mode . eshell-fringe-status-mode))
 
-(use-package eshell-git-prompt
+;; (use-package eshell-git-prompt
+;;   :ensure t
+;;   :config
+;;   (eshell-git-prompt-use-theme 'powerline))
+
+(use-package eshell-prompt-extras
   :ensure t
-  :config
-  (eshell-git-prompt-use-theme 'powerline))
+  :after esh-opt
+  :custom
+  (eshell-highlight-prompt nil)
+  (eshell-prompt-function #'epe-theme-dakrone))
 
 (use-package eshell-toggle
   :ensure t
