@@ -754,6 +754,11 @@
 (use-package dired-x
   :ensure nil)
 
+(use-package dired-sidebar
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar)))
+
 (use-package dired-hide-dotfiles
   :ensure t
   :bind
