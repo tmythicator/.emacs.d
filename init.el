@@ -757,7 +757,10 @@
 (use-package dired-sidebar
   :ensure t
   :commands (dired-sidebar-toggle-sidebar)
-  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar)))
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :custom
+  (dired-sidebar-subtree-line-prefix "<>")
+  (dired-sidebar-theme 'nerd))
 
 (use-package dired-hide-dotfiles
   :ensure t
