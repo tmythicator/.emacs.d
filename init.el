@@ -328,7 +328,7 @@
   ;; Visual commands are commands which require a proper terminal
   ;; eshell will run them in a term buffer when you invoke them.
   (eshell-visual-commands
-   '("tmux" "htop" "top"))
+   '("npm" "tmux" "htop" "top"))
   (eshell-visual-subcommands
    '(("git" "log" "l" "diff" "show"))))
 
@@ -675,23 +675,8 @@
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   :custom
   (org-src-tab-acts-natively t)
-  (org-todo-keyword-faces
-   '(
-     ("TODO" . (:background "red"
-                            :foreground "white"
-                            :weight bold))
-     ("IN-PROGRESS" . (:background "yellow"
-                                   :foreground "black"
-                                   :weight bold))
-     ("SKIP" . (:background "purple"
-                            :foreground "white"
-                            :weight bold))
-     ("DONE" . (:background "green"
-                            :foreground "black"
-                            :weight bold))))
   (org-todo-keywords
-   '((sequence "TODO" "IN-PROGRESS" "SKIP" "|" "DONE")
-     (sequence "REPORT(r)" "BUG(b)" "KNOWNCAUSE(k)" "|" "FIXED(f)"))))
+   '(sequence "TODO" "IN-PROGRESS(w)" "BUG(b)" "|" "DONE" "FIXED(f)" "KNOWNCAUSE(k)" "SKIP(s)")))
 
 (use-package org-bullets
   :ensure t
