@@ -675,9 +675,9 @@
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   :custom
   (org-src-tab-acts-natively t)
-  ;; (org-todo-keywords
-  ;;  '(sequence "TODO" "IN-PROGRESS(w)" "BUG(b)" "|" "DONE" "FIXED(f)" "KNOWNCAUSE(k)" "SKIP(s)"))
-  )
+  (org-todo-keywords
+   '((sequence "TODO(t)" "|" "DONE(d)")
+     (sequence "IN-PROGRESS(w)" "BUG(b)" "|" "FIXED(f)" "KNOWNCAUSE(k)" "SKIP(s)"))))
 
 (use-package org-bullets
   :ensure t
