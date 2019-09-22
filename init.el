@@ -266,7 +266,7 @@
 
   :custom
   (dashboard-items '((recents  . 5)
-                     (bookmarks . 5)
+                     (bookmarks . 7)
                      (projects . 5)
                      (agenda . 5))))
 
@@ -463,6 +463,71 @@
   (python-mode-hook . jedi:setup-function)
   (python-mode-hook . jedi:ac-setup-function))
 
+;; JS stuff
+;; js2-mode
+;; https://github.com/mooz/js2-mode
+(use-package js2-mode
+  :ensure t
+  :bind (:map js2-mode-map
+              (("C-x C-e" . js-send-last-sexp)
+               ("C-M-x" . js-send-last-sexp-and-go)
+               ("C-c C-b" . js-send-buffer-and-go)
+               ("C-c C-l" . js-load-file-and-go)))
+  :mode
+  ("\\.js$" . js2-mode)
+  ;;  ("\\.json$" . js2-jsx-mode)
+  :config
+  (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
+  (custom-set-variables '(js2-strict-missing-semi-warning nil))
+
+  (setq js-indent-level 2)
+  (setq js2-indent-level 2)
+  (setq js2-basic-offset 2)
+
+  ;; tern :- IDE like features for javascript and completion
+  ;; http://ternjs.net/doc/manual.html#emacs
+  (use-package tern
+    :ensure t
+    :config
+    (defun my-js-mode-hook ()
+      "Hook for `js-mode'."
+      (set (make-local-variable 'company-backends)
+           '((company-tern company-files))))
+    (add-hook 'js2-mode-hook 'my-js-mode-hook)
+    (add-hook 'js2-mode-hook 'company-mode))
+
+  (add-hook 'js2-mode-hook 'tern-mode)
+
+  ;; company backend for tern
+  ;; http://ternjs.net/doc/manual.html#emacs
+  (use-package company-tern :ensure t)
+
+  ;; Run a JavaScript interpreter in an inferior process window
+  ;; https://github.com/redguardtoo/js-comint
+  (use-package js-comint
+    :ensure t
+    :config
+    (setq inferior-js-program-command "node"))
+
+  ;; js2-refactor :- refactoring options for emacs
+  ;; https://github.com/magnars/js2-refactor.el
+  (use-package js2-refactor
+    :ensure t
+    :defer t
+    :diminish js2-refactor-mode
+    :config
+    (js2r-add-keybindings-with-prefix "C-c j r"))
+  (add-hook 'js2-mode-hook 'js2-refactor-mode))
+
+(use-package react-snippets :ensure t)
+
+(use-package js-react-redux-yasnippets :ensure t)
+
+(use-package rjsx-mode
+  :ensure t
+  :mode
+  ("\\.js$" . rjsx-mode))
+
 ;; Company
 (use-package company
   :ensure t
@@ -559,6 +624,15 @@
   :config
   (winner-mode 1))
 
+(use-package windmove
+  :bind
+  ("M-<up>" . windmove-up)
+  ("M-<down>" . windmove-down)
+  ("M-<left>" . windmove-left)
+  ("M-<right>" . windmove-right))
+
+(use-package wgrep :ensure t)
+
 (use-package avy
   :ensure t
   :config
@@ -594,6 +668,7 @@
   :commands projectile-global-mode
   :config
   (projectile-global-mode)
+  (setq projectile-completion-system 'ivy)
   ;; Use C-c C-f to find a file anywhere in the current project.
   ;;  :bind
   ;;  ("C-c C-f" . projectile-find-file)
@@ -613,7 +688,11 @@
 (use-package org
   ;; to be sure we have latest Org version
   :ensure org-plus-contrib
+  :bind
+  ("C-c l" . org-store-link)
+  ("C-c a" . org-agenda)
   :config
+  (setq org-default-notes-file "~/Org/notes.org")
   ;; Org-ref
   (use-package org-ref
     :ensure t
@@ -678,6 +757,15 @@
   (org-todo-keywords
    '((sequence "TODO(t)" "|" "DONE(d)")
      (sequence "IN-PROGRESS(w)" "BUG(b)" "|" "FIXED(f)" "KNOWNCAUSE(k)" "SKIP(s)"))))
+
+(use-package org-projectile
+  :ensure t
+  :bind (("C-c n p" . org-projectile-project-todo-completing-read)
+         ("C-c c" . org-capture))
+  :config
+  (org-projectile-per-project)
+  (setq org-projectile-per-project-filepath "todo.org"
+        org-agenda-files (append org-agenda-files (org-projectile-todo-files))))
 
 (use-package org-bullets
   :ensure t
