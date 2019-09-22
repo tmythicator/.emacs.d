@@ -463,7 +463,8 @@
   (python-mode-hook . jedi:setup-function)
   (python-mode-hook . jedi:ac-setup-function))
 
-;; JS stuff
+;; JS/TS/React stuff
+
 ;; js2-mode
 ;; https://github.com/mooz/js2-mode
 (use-package js2-mode
@@ -527,6 +528,49 @@
   :ensure t
   :mode
   ("\\.js$" . rjsx-mode))
+
+(use-package typescript-mode
+  :ensure t
+  :mode
+  ("\\.tsx$" . typescript-mode)
+  :hook
+  (typescript-mode-hook . #'setup-tide-mode))
+
+(use-package tide
+  :ensure t
+  :after (typescript-mode company)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (js2-mode . tide-setup)
+         (rjsx-mode . tide-setup)
+         (typescript-mode . web-mode)
+         ;; (before-save . tide-format-before-save)
+         ))
+(use-package ts-comint
+  :ensure t
+  :config
+  (add-hook 'typescript-mode-hook
+            (lambda ()
+              (local-set-key (kbd "C-x C-e") 'ts-send-last-sexp)
+              (local-set-key (kbd "C-M-x") 'ts-send-last-sexp-and-go)
+              (local-set-key (kbd "C-c b") 'ts-send-buffer)
+              (local-set-key (kbd "C-c C-b") 'ts-send-buffer-and-go)
+              (local-set-key (kbd "C-c l") 'ts-load-file-and-go)))
+  )
+
+
+
+(use-package eslintd-fix
+  :ensure t
+  :hook
+  (tide-mode . eslintd-fix-mode))
+
+;; Autofix missing imports.
+(use-package import-js :ensure t)
+
+(use-package web-mode
+  :diminish
+  :ensure t)
 
 ;; Company
 (use-package company
@@ -1035,3 +1079,14 @@
           (set-window-margins nil (car current-margins))
         (set-window-margins nil (car current-margins)
                             (- current-available visual-wrap-column))))))
+
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
