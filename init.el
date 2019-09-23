@@ -508,7 +508,12 @@
   (use-package js-comint
     :ensure t
     :config
-    (setq inferior-js-program-command "node"))
+    (setq inferior-js-program-command "node")
+    (add-hook 'js2-mode-hook
+              (lambda ()
+                (local-set-key (kbd "C-x C-e") 'js-send-last-sexp)
+                (local-set-key (kbd "C-c b") 'js-send-buffer)
+                (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go))))
 
   ;; js2-refactor :- refactoring options for emacs
   ;; https://github.com/magnars/js2-refactor.el
@@ -546,6 +551,7 @@
          (typescript-mode . web-mode)
          ;; (before-save . tide-format-before-save)
          ))
+
 (use-package ts-comint
   :ensure t
   :config
@@ -555,15 +561,13 @@
               (local-set-key (kbd "C-M-x") 'ts-send-last-sexp-and-go)
               (local-set-key (kbd "C-c b") 'ts-send-buffer)
               (local-set-key (kbd "C-c C-b") 'ts-send-buffer-and-go)
-              (local-set-key (kbd "C-c l") 'ts-load-file-and-go)))
-  )
-
-
+              (local-set-key (kbd "C-c l") 'ts-load-file-and-go))))
 
 (use-package eslintd-fix
   :ensure t
   :hook
-  (tide-mode . eslintd-fix-mode))
+  (tide-mode . eslintd-fix-mode)
+  (rxjs-mode . eslintd-fix-mode))
 
 ;; Autofix missing imports.
 (use-package import-js :ensure t)
