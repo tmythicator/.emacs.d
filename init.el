@@ -441,6 +441,16 @@
   (diminish 'cider-mode
             '(:eval (format " 🍏%s" (cider--modeline-info)))))
 
+;; ABAP stuff
+(use-package abap
+  :quelpa
+  (abap :repo "qianmarv/sap-abap-mode" :fetcher github :version original))
+
+(use-package abap-mode
+  :mode ("\\.abap\\'" . abap-mode)
+  :quelpa
+  (abap-mode :repo "qianmarv/ABAPInEmacs" :fetcher github :version original))
+
 ;; Python stuff
 (use-package python
   :custom
@@ -860,7 +870,6 @@
   (elfeed-feeds '(("https://sachachua.com/blog/feed/" s-chua)
                   ("https://www.iwi.hs-karlsruhe.de/iwii/REST/rssfeed/newsbulletinboard/INFB.xml" hska)))
   :bind (("C-x w" . elfeed)))
-
 
 ;;Dired things
 (use-package dired
