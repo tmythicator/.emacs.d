@@ -341,11 +341,6 @@
   :hook
   (eshell-mode . eshell-fringe-status-mode))
 
-;; (use-package eshell-git-prompt
-;;   :ensure t
-;;   :config
-;;   (eshell-git-prompt-use-theme 'powerline))
-
 (use-package eshell-prompt-extras
   :ensure t
   :after esh-opt
@@ -728,10 +723,8 @@
   :commands projectile-global-mode
   :config
   (projectile-global-mode)
-  (setq projectile-completion-system 'ivy)
-  ;; Use C-c C-f to find a file anywhere in the current project.
-  ;;  :bind
-  ;;  ("C-c C-f" . projectile-find-file)
+  :custom
+  (projectile-completion-system 'ivy)
   :diminish projectile-mode)
 
 ;; Use ibuffer instead of list-buffers (C-x C-b) and sort by project.
@@ -997,45 +990,6 @@
   :config
   (solaire-global-mode +1)
   (solaire-mode-swap-bg))
-
-;; Lighter theme
-;; (use-package silkworm-theme
-;;  :ensure t
-;;   :config
-;;   (load-theme 'silkworm t))
-
-;;(use-package solarized-theme
-;;  :ensure t
-;;  :config
-;;  (load-theme 'solarized-dark t)
-;;  :custom
-;;  (x-underline-at-descent-line t))
-
-;; Darker theme
-;; (use-package nord-theme
-;;   :ensure t
-;;   :init
-;;   (setq nord-uniform-mode-lines t)
-;;   ;;  (setq nord-region-highlight "snowstorm")
-;;   :config
-;;   ;;(load-theme 'nord t)) ;; buggy in daemon mode ;(
-;;   ;; Temporary fix for daemon-mode
-;;   (if (daemonp)
-;;       (cl-labels ((load-nord (frame)
-;;                              (with-selected-frame frame
-;;                                (load-theme 'nord t))
-;;                              (remove-hook 'after-make-frame-functions #'load-nord)))
-;;         (add-hook 'after-make-frame-functions #'load-nord))
-;;     (load-theme 'nord t)))
-
-;; Engage Nyan Cat!
-;; (use-package nyan-mode
-;;   :ensure t
-;;   :config
-;;   (nyan-mode 1)
-;;   :custom
-;;   (nyan-bar-length 16)
-;;   (nyan-wavy-trail t))
 
 ;; Transparency
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
