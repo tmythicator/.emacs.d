@@ -969,10 +969,15 @@
   :custom
   (tooltip-mode -1))
 
-(use-package color-theme-sanityinc-tomorrow
+;; (use-package color-theme-sanityinc-tomorrow
+;;   :ensure t
+;;   :config
+;;   (load-theme 'sanityinc-tomorrow-night t))
+
+(use-package silkworm-theme
   :ensure t
   :config
-  (load-theme 'sanityinc-tomorrow-night t))
+  (load-theme 'silkworm t))
 
 (use-package doom-modeline
   :ensure t
