@@ -176,7 +176,7 @@
          (yaml-mode . hl-todo-mode)))
 
 ;; Ivy and counsel
-(use-package smex :ensure t)
+;; (use-package smex :ensure t)
 
 (use-package counsel
   :ensure t
