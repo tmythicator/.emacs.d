@@ -1002,6 +1002,12 @@
 (display-time-mode 1)
 (fringe-mode 10)
 
+;; Smooth scrolling
+(use-package smooth-scrolling
+  :ensure t
+  :config
+  (smooth-scrolling-mode 1))
+
 ;; Functions
 (defun my/calc-ml-time (enum etime-sec)
   "Calculates time in mins and hours, given the number of epochs and time for each epoch in seconds"
