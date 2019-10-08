@@ -29,12 +29,6 @@
 
 (use-package use-package-ensure-system-package :ensure t)
 
-;; :diminish keyword
-(use-package diminish :ensure t)
-
-;; :bind keyword
-(use-package bind-key :ensure t)
-
 ;; :quelpa keyword
 (use-package quelpa
   :ensure t
