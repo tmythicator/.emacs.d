@@ -117,7 +117,7 @@
   :hook
   (before-save . delete-trailing-whitespace)
   :custom
-  (require-final-newline t)
+  ;;  (require-final-newline t)
   ;; backup settings
   (backup-by-copying t)
   (backup-directory-alist
@@ -770,7 +770,9 @@
           bibtex-autokey-titleword-separator "-"
           bibtex-autokey-titlewords 2
           bibtex-autokey-titlewords-stretch 1
-          bibtex-autokey-titleword-length 5))
+          bibtex-autokey-titleword-length 5)
+    :custom
+    (org-ref-completion-library 'org-ref-ivy-cite))
 
   ;; Open PDF with pdfview
   (use-package org-pdfview :ensure t)
