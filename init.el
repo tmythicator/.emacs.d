@@ -834,6 +834,11 @@
     :config
     (pdf-tools-install)))
 
+(use-package nov
+  :ensure t
+  :mode
+  ("\\.epub$" . nov-mode))
+
 (use-package markdown-mode
   :ensure t
   :commands markdown-mode
