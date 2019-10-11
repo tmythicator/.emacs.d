@@ -425,31 +425,20 @@
     (abap-mode :repo "qianmarv/ABAPInEmacs" :fetcher github :version original)))
 
 ;; Python stuff
-;; (use-package python
-;;   :custom
-;;   (python-shell-interpreter "ipython")
-;;   (python-shell-interpreter-args "--simple-prompt --pprint"))
+(use-package python
+  :custom
+  (python-shell-interpreter "ipython")
+  (python-shell-interpreter-args "--simple-prompt --pprint"))
 
-;; (use-package pyvenv
-;;   :ensure t)
+(use-package pyvenv
+  :ensure t)
 
-;; (use-package ipython-shell-send
-;;   :ensure t
-;;   :bind ("C-c r" . ipython-shell-send-region)
-;;   :hook (python-mode-hook))
-
-;; (use-package jedi
-;;   :ensure t
-;;   :custom
-;;   (jedi:complete-on-dot t)
-;;   :hook
-;;   (python-mode-hook . jedi:setup-function)
-;;   (python-mode-hook . jedi:ac-setup-function))
+(use-package ipython-shell-send
+  :ensure t
+  :bind ("C-c r" . ipython-shell-send-region)
+  :hook (python-mode-hook))
 
 ;; JS/TS/React stuff
-
-;; js2-mode
-;; https://github.com/mooz/js2-mode
 (use-package js2-mode
   :ensure t
   :bind (:map js2-mode-map
