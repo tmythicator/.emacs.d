@@ -359,61 +359,43 @@
 
 
 ;; LSP-mode
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :config
 
-;;   ;; make sure we have lsp-imenu everywhere we have LSP
-;;   (require 'lsp-imenu)
-;;   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-;;   ;; get lsp-python-enable defined
-;;   ;; NB: use either projectile-project-root or ffip-get-project-root-directory
-;;   ;;     or any other function that can be used to find the root directory of a project
-;;   (lsp-define-stdio-client lsp-python "python"
-;;                            #'projectile-project-root
-;;                            '("pyls"))
-
-;;   ;; make sure this is activated when python-mode is activated
-;;   ;; lsp-python-enable is created by macro above
-;;   (add-hook 'python-mode-hook
-;;             (lambda ()
-;;               (lsp-python-enable)))
-
-;;   ;; lsp extras
-;;   (use-package lsp-ui
-;;     :ensure t
-;;     :config
-;;     (setq lsp-ui-sideline-ignore-duplicate t)
-;;     (add-hook 'lsp-mode-hook 'lsp-ui-mode))
-
-;;   (use-package company-lsp
-;;     :ensure t
-;;     :config
-;;     (push 'company-lsp company-backends))
-
-;;   ;; NB: only required if you prefer flake8 instead of the default
-;;   ;; send pyls config via lsp-after-initialize-hook -- harmless for
-;;   ;; other servers due to pyls key, but would prefer only sending this
-;;   ;; when pyls gets initialised (:initialize function in
-;;   ;; lsp-define-stdio-client is invoked too early (before server
-;;   ;; start)) -- cpbotha
-;;   (defun lsp-set-cfg ()
-;;     (let ((lsp-cfg `(:pyls (:configurationSources ("flake8")))))
-;;       ;; TODO: check lsp--cur-workspace here to decide per server / project
-;;       (lsp--set-configuration lsp-cfg)))
-
-;;   (add-hook 'lsp-after-initialize-hook 'lsp-set-cfg)
-
-;;   :custom
-;;   (lsp-enable-snippet nil))
-
-;; Common Lisp stuff
-(use-package slime
+(use-package lsp-mode
   :ensure t
+  :commands lsp
   :custom
-  (inferior-lisp-program "sbcl")
-  (slime-contribs '(slime-fancy))
-  (slime-setup '(slime-company)))
+  (lsp-auto-guess-root nil)
+  (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
+  :bind (:map lsp-mode-map ("C-c f" . lsp-format-buffer))
+  :hook ((python-mode c-mode c++-mode) . lsp))
+
+(use-package lsp-ui
+  :ensure t
+  :after lsp-mode
+  :diminish
+  :commands lsp-ui-mode
+  :custom-face
+  (lsp-ui-doc-background ((t (:background nil))))
+  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  :bind (:map lsp-ui-mode-map
+              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+              ([remap xref-find-references] . lsp-ui-peek-find-references)
+              ("C-c i" . lsp-ui-imenu))
+  :custom
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-use-webkit t)  ;; Use lsp-ui-doc-webkit only in GUI
+  (lsp-ui-doc-header t)
+  (lsp-ui-doc-include-signature t)
+  (lsp-ui-doc-position 'top)
+  (lsp-ui-doc-border (face-foreground 'default))
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-code-actions nil)
+  :config
+  ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+  ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+  (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+    (setq mode-line-format nil)))
 
 ;; Clojure stuff
 (use-package clojure-mode
@@ -443,26 +425,26 @@
     (abap-mode :repo "qianmarv/ABAPInEmacs" :fetcher github :version original)))
 
 ;; Python stuff
-(use-package python
-  :custom
-  (python-shell-interpreter "ipython")
-  (python-shell-interpreter-args "--simple-prompt --pprint"))
+;; (use-package python
+;;   :custom
+;;   (python-shell-interpreter "ipython")
+;;   (python-shell-interpreter-args "--simple-prompt --pprint"))
 
-(use-package pyvenv
-  :ensure t)
+;; (use-package pyvenv
+;;   :ensure t)
 
-(use-package ipython-shell-send
-  :ensure t
-  :bind ("C-c r" . ipython-shell-send-region)
-  :hook (python-mode-hook))
+;; (use-package ipython-shell-send
+;;   :ensure t
+;;   :bind ("C-c r" . ipython-shell-send-region)
+;;   :hook (python-mode-hook))
 
-(use-package jedi
-  :ensure t
-  :custom
-  (jedi:complete-on-dot t)
-  :hook
-  (python-mode-hook . jedi:setup-function)
-  (python-mode-hook . jedi:ac-setup-function))
+;; (use-package jedi
+;;   :ensure t
+;;   :custom
+;;   (jedi:complete-on-dot t)
+;;   :hook
+;;   (python-mode-hook . jedi:setup-function)
+;;   (python-mode-hook . jedi:ac-setup-function))
 
 ;; JS/TS/React stuff
 
@@ -593,10 +575,6 @@
     :custom
     (company-quickhelp-delay 3))
 
-  ;; For Common Lisp
-  (use-package slime-company
-    :ensure t)
-
   ;; Add a completion source for emoji. 😸
   (use-package company-emoji
     :ensure t
@@ -616,9 +594,11 @@
                ("C-\\" . company-try-hard)))
   :custom
   ;; Except when you're in term-mode/python-mode.
-  (company-global-modes '(not term-mode python-mode))
+  (company-global-modes '(not term-mode ;; python-mode
+                              ))
   ;; Give Company a decent default configuration.
-  (company-minimum-prefix-length 2)
+  (company-idle-delay 0)
+  (company-minimum-prefix-length 3)
   (company-selection-wrap-around t)
   (company-show-numbers t)
   (company-tooltip-align-annotations t)
@@ -627,6 +607,11 @@
   (company-dabbrev-ignore-case nil)
   :hook
   (after-init . global-company-mode))
+
+(use-package company-lsp
+  :ensure t
+  :config
+  (push 'company-lsp company-backends))
 
 ;; Flycheck
 (use-package flycheck
