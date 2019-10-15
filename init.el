@@ -746,9 +746,7 @@
   (add-hook
    'org-mode-hook
    (lambda ()
-     (visual-line-mode 1)
-     ;;(set-visual-wrap-column 80)
-     (linum-mode -1)))
+     (visual-line-mode 1)))
   ;; Minted
   (require 'ox-latex)
   (setq org-latex-listings 'minted)
@@ -766,10 +764,7 @@
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   :custom
-  (org-src-tab-acts-natively t)
-  (org-todo-keywords
-   '((sequence "TODO(t)" "|" "DONE(d)")
-     (sequence "IN-PROGRESS(w)" "BUG(b)" "|" "FIXED(f)" "KNOWNCAUSE(k)" "SKIP(s)"))))
+  (org-src-tab-acts-natively t))
 
 (use-package org-projectile
   :ensure t
@@ -966,12 +961,6 @@
 (set-frame-parameter nil 'alpha '(92 . 75))
 (display-time-mode 1)
 (fringe-mode 10)
-
-;; Smooth scrolling
-(use-package smooth-scrolling
-  :ensure t
-  :config
-  (smooth-scrolling-mode 1))
 
 ;; Functions
 (defun my/calc-ml-time (enum etime-sec)
