@@ -298,11 +298,11 @@
   :bind ("M-;" . smart-comment))
 
 ;; Eshell stuff
-(when (not (eq system-type 'windows-nt))
-  (use-package exec-path-from-shell
-    :ensure t
-    :config
-    (exec-path-from-shell-initialize)))
+(use-package exec-path-from-shell
+  :if (eq system-type 'gnu/linux)
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
 
 (use-package bash-completion
   :commands bash-completion-dynamic-complete
@@ -414,15 +414,20 @@
 
 ;; ABAP stuff
 ;; haven't found the workaround in windows yet
-(when (not (eq system-type 'windows-nt))
-  (use-package abap
-    :quelpa
-    (abap :repo "qianmarv/sap-abap-mode" :fetcher github :version original))
+(use-package abap
+  :if (eq system-type 'gnu/linux)
+  :quelpa
+  (abap :repo "qianmarv/sap-abap-mode"
+        :fetcher github
+        :version original))
 
-  (use-package abap-mode
-    :mode ("\\.abap\\'" . abap-mode)
-    :quelpa
-    (abap-mode :repo "qianmarv/ABAPInEmacs" :fetcher github :version original)))
+(use-package abap-mode
+  :if (eq system-type 'gnu/linux)
+  :mode ("\\.abap\\'" . abap-mode)
+  :quelpa
+  (abap-mode :repo "qianmarv/ABAPInEmacs"
+             :fetcher github
+             :version original))
 
 ;; Python stuff
 (use-package python
@@ -795,13 +800,13 @@
   (org-mode . org-bullets-mode))
 
 ;; Needs msys2 for windows. Deactivate as workaround
-(when (not (eq system-type 'windows-nt))
-  (use-package pdf-tools
-    :ensure t
-    :mode
-    ("\\.pdf\\'" . pdf-view-mode)
-    :config
-    (pdf-tools-install)))
+(use-package pdf-tools
+  :if (eq system-type 'gnu/linux)
+  :ensure t
+  :mode
+  ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (pdf-tools-install))
 
 (use-package nov
   :ensure t
