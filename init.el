@@ -366,7 +366,7 @@
   (lsp-auto-guess-root nil)
   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
   :bind (:map lsp-mode-map ("C-c f" . lsp-format-buffer))
-  :hook ((python-mode typescript-mode js2-mode  c-mode c++-mode) . lsp))
+  :hook ((java-mode python-mode typescript-mode js2-mode c-mode c++-mode) . lsp))
 
 (use-package lsp-ui
   :ensure t
@@ -395,6 +395,27 @@
   ;; https://github.com/emacs-lsp/lsp-ui/issues/243
   (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
     (setq mode-line-format nil)))
+
+;; JAVA
+(use-package lsp-java
+  :ensure t)
+
+;; Debugger for LSP
+(use-package dap-mode
+  :ensure t
+  :after lsp
+  :config
+
+  (use-package dap-firefox
+    :config (dap-firefox-setup 1))
+
+  (dap-mode 1)
+  (dap-ui-mode 1)
+  ;; enables mouse hover support
+  (dap-tooltip-mode 1)
+  (tooltip-mode 1))
+
+(use-package dap-java :after lsp-java)
 
 ;; Clojure stuff
 (use-package clojure-mode
