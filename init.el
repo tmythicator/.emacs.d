@@ -984,6 +984,15 @@
 (fringe-mode 10)
 
 ;; Functions
+(defun powershell (&optional buffer)
+  "Launches a powershell in buffer *powershell* and switches to it."
+  (interactive)
+  (let ((buffer (or buffer "*powershell*"))
+        (powershell-prog "c:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"))
+    (make-comint-in-buffer "shell" "*powershell*" powershell-prog)
+    (switch-to-buffer buffer)
+    (visual-line-mode 1)))
+
 (defun my/calc-ml-time (enum etime-sec)
   "Calculates time in mins and hours, given the number of epochs and time for each epoch in seconds"
   (interactive "nNumber of epochs? \nnHow much time does each epoch take? ")
