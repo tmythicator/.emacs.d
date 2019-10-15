@@ -359,7 +359,6 @@
 
 
 ;; LSP-mode
-
 (use-package lsp-mode
   :ensure t
   :commands lsp
@@ -367,7 +366,7 @@
   (lsp-auto-guess-root nil)
   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
   :bind (:map lsp-mode-map ("C-c f" . lsp-format-buffer))
-  :hook ((python-mode c-mode c++-mode) . lsp))
+  :hook ((python-mode typescript-mode js2-mode  c-mode c++-mode) . lsp))
 
 (use-package lsp-ui
   :ensure t
@@ -513,21 +512,7 @@
 
 (use-package typescript-mode
   :ensure t
-  :mode
-  ("\\.tsx$" . typescript-mode)
-  :hook
-  (typescript-mode-hook . #'setup-tide-mode))
-
-(use-package tide
-  :ensure t
-  :after (typescript-mode company)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (js2-mode . tide-setup)
-         (rjsx-mode . tide-setup)
-         (typescript-mode . web-mode)
-         ;; (before-save . tide-format-before-save)
-         ))
+  :mode("\\.tsx$" . typescript-mode))
 
 (use-package ts-comint
   :ensure t
@@ -543,7 +528,7 @@
 (use-package eslintd-fix
   :ensure t
   :hook
-  (tide-mode . eslintd-fix-mode)
+  (typescript-mode . eslintd-fix-mode)
   (rxjs-mode . eslintd-fix-mode))
 
 ;; Autofix missing imports.
@@ -1041,14 +1026,3 @@
           (set-window-margins nil (car current-margins))
         (set-window-margins nil (car current-margins)
                             (- current-available visual-wrap-column))))))
-
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
