@@ -264,6 +264,7 @@
                      (projects . 5)
                      (agenda . 5))))
 
+;; Tramp things
 (use-package tramp
   :defer t
   :config
@@ -274,6 +275,12 @@
                             "plink"
                           "ssh"))
   (tramp-default-proxies-alist nil))
+
+(use-package counsel-tramp
+  :ensure t
+  :custom
+  (make-backup-files nil)
+  (create-lockfiles nil))
 
 ;; Rest client stuff
 (use-package request
