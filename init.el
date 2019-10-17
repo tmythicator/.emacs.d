@@ -413,8 +413,7 @@
   :after lsp
   :config
 
-  (use-package dap-firefox
-    :config (dap-firefox-setup 1))
+  (use-package dap-firefox)
 
   (dap-mode 1)
   (dap-ui-mode 1)
