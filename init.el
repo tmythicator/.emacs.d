@@ -170,8 +170,6 @@
          (yaml-mode . hl-todo-mode)))
 
 ;; Ivy and counsel
-;; (use-package smex :ensure t)
-
 (use-package counsel
   :ensure t
   :diminish counsel-mode
@@ -422,6 +420,9 @@
   (tooltip-mode 1))
 
 (use-package dap-java :after lsp-java)
+
+;; Haskell stuff
+(use-package haskell-mode :ensure t)
 
 ;; Clojure stuff
 (use-package clojure-mode
@@ -985,7 +986,7 @@
 
 ;; Transparency
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
-(set-frame-parameter nil 'alpha '(92 . 75))
+(set-frame-parameter nil 'alpha '(85 . 75))
 (display-time-mode 1)
 (fringe-mode 10)
 
