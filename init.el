@@ -327,7 +327,7 @@
   ;; Visual commands are commands which require a proper terminal
   ;; eshell will run them in a term buffer when you invoke them.
   (eshell-visual-commands
-   '("npm" "tmux" "htop" "top"))
+   '("tmux" "htop" "top"))
   (eshell-visual-subcommands
    '(("git" "log" "l" "diff" "show"))))
 
@@ -559,6 +559,15 @@
   (typescript-mode . eslintd-fix-mode)
   (rxjs-mode . eslintd-fix-mode))
 
+
+(use-package jest :ensure t)
+
+(use-package flycheck-jest
+  :ensure t
+  :after jest
+  :config
+  (flycheck-jest-setup))
+
 ;; Autofix missing imports.
 (use-package import-js :ensure t)
 
@@ -705,13 +714,25 @@
 ;; Projectile
 (use-package projectile
   :ensure t
-  :demand t
+  :diminish projectile-mode
+  :bind
+  (:map mode-specific-map ("p" . projectile-command-map))
   :commands projectile-global-mode
   :config
   (projectile-global-mode)
   :custom
-  (projectile-completion-system 'ivy)
-  :diminish projectile-mode)
+  (projectile-project-root-files-functions
+   '(projectile-root-local
+     projectile-root-top-down
+     projectile-root-bottom-up
+     projectile-root-top-down-recurring))
+  (projectile-completion-system 'ivy))
+
+(use-package counsel-projectile
+  :ensure t
+  :after counsel projectile
+  :config
+  (counsel-projectile-mode))
 
 ;; Use ibuffer instead of list-buffers (C-x C-b) and sort by project.
 (use-package ibuffer-projectile
@@ -848,14 +869,6 @@
   (global-git-gutter-mode t)
   :diminish git-gutter-mode)
 
-;; Elfeed
-(use-package elfeed
-  :ensure t
-  :custom
-  (elfeed-feeds '(("https://sachachua.com/blog/feed/" s-chua)
-                  ("https://www.iwi.hs-karlsruhe.de/iwii/REST/rssfeed/newsbulletinboard/INFB.xml" hska)))
-  :bind (("C-x w" . elfeed)))
-
 ;;Dired things
 (use-package dired
   :ensure nil
@@ -986,7 +999,7 @@
 
 ;; Transparency
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
-(set-frame-parameter nil 'alpha '(85 . 75))
+(set-frame-parameter nil 'alpha '(95 . 75))
 (display-time-mode 1)
 (fringe-mode 10)
 
