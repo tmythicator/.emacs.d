@@ -605,7 +605,7 @@
                               ))
   ;; Give Company a decent default configuration.
   (company-idle-delay 0)
-  (company-minimum-prefix-length 3)
+  (company-minimum-prefix-length 1)
   (company-selection-wrap-around t)
   (company-show-numbers t)
   (company-tooltip-align-annotations t)
