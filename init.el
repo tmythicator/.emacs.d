@@ -327,7 +327,7 @@
   ;; Visual commands are commands which require a proper terminal
   ;; eshell will run them in a term buffer when you invoke them.
   (eshell-visual-commands
-   '("tmux" "htop" "top"))
+   '("npm" "tmux" "htop" "top"))
   (eshell-visual-subcommands
    '(("git" "log" "l" "diff" "show"))))
 
