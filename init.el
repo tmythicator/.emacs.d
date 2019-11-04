@@ -691,6 +691,7 @@
   (("C-," .   avy-goto-char-timer)
    ("C-." .   avy-goto-word-1)
    :map goto-map
+   ("M-c" . avy-goto-char)
    ("M-g" . avy-goto-line)))
 
 (use-package avy-zap
