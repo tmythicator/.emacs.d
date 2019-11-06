@@ -327,7 +327,7 @@
   ;; Visual commands are commands which require a proper terminal
   ;; eshell will run them in a term buffer when you invoke them.
   (eshell-visual-commands
-   '("npm" "tmux" "htop" "top"))
+   '("pip" "pipenv" "npm" "tmux" "htop" "top"))
   (eshell-visual-subcommands
    '(("git" "log" "l" "diff" "show"))))
 
@@ -981,13 +981,11 @@
   :config
   (load-theme 'silkworm t))
 
-(use-package doom-modeline
+
+(use-package mood-line
   :ensure t
-  :custom
-  (doom-modeline-height 5)
-  (doom-modeline-icon t)
-  (doom-modeline-major-mode-color-icon t)
-  :hook (after-init . doom-modeline-mode))
+  :hook (after-init . mood-line-mode))
+
 
 (use-package solaire-mode
   :ensure t
