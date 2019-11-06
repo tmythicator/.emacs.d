@@ -976,25 +976,20 @@
 ;;   :config
 ;;   (load-theme 'sanityinc-tomorrow-night t))
 
-(use-package silkworm-theme
+;; (use-package silkworm-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'silkworm t))
+
+(use-package mood-one-theme
   :ensure t
   :config
-  (load-theme 'silkworm t))
-
+  (eval-after-load 'flycheck #'mood-one-theme-flycheck-fringe-bmp-enable)
+  :hook (after-init . mood-one-theme ))
 
 (use-package mood-line
   :ensure t
   :hook (after-init . mood-line-mode))
-
-
-(use-package solaire-mode
-  :ensure t
-  :hook
-  ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
-  (minibuffer-setup . solaire-mode-in-minibuffer)
-  :config
-  (solaire-global-mode +1)
-  (solaire-mode-swap-bg))
 
 ;; Transparency
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
