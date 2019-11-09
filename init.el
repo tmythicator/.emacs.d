@@ -800,6 +800,7 @@
   ;; Minted
   (require 'ox-latex)
   (setq org-latex-listings 'minted)
+
   ;; Babel src evaluator
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -814,7 +815,10 @@
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   :custom
-  (org-src-tab-acts-natively t))
+  (org-src-tab-acts-natively t)
+  (org-todo-keyword-faces
+   '(("SAMPLE" . "yellow")
+     )))
 
 (use-package org-projectile
   :ensure t
@@ -985,7 +989,7 @@
   :ensure t
   :config
   (eval-after-load 'flycheck #'mood-one-theme-flycheck-fringe-bmp-enable)
-  :hook (after-init . mood-one-theme ))
+  :hook (after-init . (lambda () (load-theme 'mood-one t))))
 
 (use-package mood-line
   :ensure t
