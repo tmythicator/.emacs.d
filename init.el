@@ -107,6 +107,10 @@
   :bind
   ([remap list-buffers] . ibuffer))
 
+(use-package imenu
+  :defer
+  :config (setq imenu-auto-rescan t))
+
 (use-package files
   :hook
   (before-save . delete-trailing-whitespace)
@@ -370,7 +374,11 @@
   :custom
   (lsp-auto-guess-root nil)
   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
-  :bind (:map lsp-mode-map ("C-c f" . lsp-format-buffer))
+  :bind (:map lsp-mode-map
+              ("C-c l f" . lsp-format-buffer)
+              ("C-c l r" . lsp-rename)
+              ("C-c l l" . lsp-find-references)
+              )
   :hook ((java-mode python-mode typescript-mode js2-mode c-mode c++-mode) . lsp))
 
 (use-package lsp-ui
@@ -382,19 +390,23 @@
   (lsp-ui-doc-background ((t (:background nil))))
   (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
   :bind (:map lsp-ui-mode-map
+              ("C-c l c" . lsp-ui-sideline-apply-code-actions)
+              ("C-c l s" . lsp-ui-find-workspace-symbol)
+              ("C-c l d" . lsp-ui-doc-mode)
+              ("C-c l i" . lsp-ui-imenu)
               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-              ([remap xref-find-references] . lsp-ui-peek-find-references)
-              ("C-c i" . lsp-ui-imenu))
+              ([remap xref-find-references] . lsp-ui-peek-find-references))
   :custom
-  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-enable nil)
   (lsp-ui-doc-use-webkit t)  ;; Use lsp-ui-doc-webkit only in GUI
   (lsp-ui-doc-header t)
   (lsp-ui-doc-include-signature t)
   (lsp-ui-doc-position 'top)
   (lsp-ui-doc-border (face-foreground 'default))
   (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-show-hover nil)
   (lsp-ui-sideline-ignore-duplicate t)
-  (lsp-ui-sideline-show-code-actions nil)
+  ;;  (lsp-ui-sideline-show-code-actions nil)
   :config
   ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
   ;; https://github.com/emacs-lsp/lsp-ui/issues/243
@@ -403,7 +415,11 @@
 
 ;; JAVA
 (use-package lsp-java
-  :ensure t)
+  :ensure t
+  :after lsp-mode
+  :bind (:map java-mode-map
+              ("C-c l a" . lsp-java-add-import)
+              ("C-c l o" . lsp-java-organize-imports)))
 
 ;; Debugger for LSP
 (use-package dap-mode
