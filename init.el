@@ -1000,16 +1000,16 @@
 ;;   :config
 ;;   (load-theme 'sanityinc-tomorrow-night t))
 
-;; (use-package silkworm-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'silkworm t))
-
-(use-package mood-one-theme
+(use-package silkworm-theme
   :ensure t
   :config
-  (eval-after-load 'flycheck #'mood-one-theme-flycheck-fringe-bmp-enable)
-  :hook (after-init . (lambda () (load-theme 'mood-one t))))
+  (load-theme 'silkworm t))
+
+;; (use-package mood-one-theme
+;;   :ensure t
+;;   :config
+;;   (eval-after-load 'flycheck #'mood-one-theme-flycheck-fringe-bmp-enable)
+;;   :hook (after-init . (lambda () (load-theme 'mood-one t))))
 
 (use-package mood-line
   :ensure t
