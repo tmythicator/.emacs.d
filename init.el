@@ -643,7 +643,11 @@
 (use-package company-lsp
   :ensure t
   :config
-  (push 'company-lsp company-backends))
+  (push 'company-lsp company-backends)
+  :custom
+  (company-lsp-async t)
+  (company-lsp-cache-candidates 'auto)
+  (company-lsp-match-candidate-predicate #'company-lsp-match-candidate-flex))
 
 ;; Flycheck
 (use-package flycheck
