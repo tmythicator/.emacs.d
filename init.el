@@ -376,9 +376,10 @@
   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
   :bind (:map lsp-mode-map
               ("C-c l f" . lsp-format-buffer)
-              ("C-c l r" . lsp-rename)
               ("C-c l l" . lsp-find-references)
-              )
+              ("C-c l o" . lsp-organize-imports)
+              ("C-c l r" . lsp-rename))
+
   :hook ((java-mode python-mode typescript-mode js2-mode c-mode c++-mode) . lsp))
 
 (use-package lsp-ui
@@ -418,8 +419,8 @@
   :ensure t
   :after lsp-mode
   :bind (:map java-mode-map
-              ("C-c l a" . lsp-java-add-import)
-              ("C-c l o" . lsp-java-organize-imports)))
+              ("C-c j a" . lsp-java-add-import)
+              ("C-c j o" . lsp-java-organize-imports)))
 
 ;; Debugger for LSP
 (use-package dap-mode
