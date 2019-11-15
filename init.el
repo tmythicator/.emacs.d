@@ -888,6 +888,11 @@
   (magit-completing-read-function 'ivy-completing-read "Force Ivy usage.")
   :bind ("C-x g" . magit-status))
 
+(use-package magit-gerrit
+  :ensure t
+  :config
+  (setq-default magit-gerrit-remote "gerrit"))
+
 ;; Mark uncommitted changes in the fringe.
 (use-package git-gutter-fringe
   :ensure t
