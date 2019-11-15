@@ -58,7 +58,7 @@
   ;; Coffeescript
   (setq-default coffee-tab-width 2)
   ;; Typescript
-  (setq-default typescript-indent-level 2
+  (setq-default typescript-indent-level 4
                 typescript-expr-indent-offset 2)
   ;; Python
   (setq-default py-indent-offset 2)
