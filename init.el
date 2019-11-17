@@ -446,15 +446,7 @@
   :ensure t
   :defer t)
 
-(use-package cider
-  :ensure t
-  :defer t
-  :custom
-  (cider-repl-display-help-banner nil)
-  :config
-  ;; sadly, we can't use :diminish keyword here, yet
-  (diminish 'cider-mode
-            '(:eval (format " 🍏%s" (cider--modeline-info)))))
+(use-package cider :ensure t)
 
 ;; ABAP stuff
 ;; haven't found the workaround in windows yet
