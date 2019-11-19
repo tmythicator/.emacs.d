@@ -404,7 +404,7 @@
   (lsp-ui-doc-include-signature t)
   (lsp-ui-doc-position 'top)
   (lsp-ui-doc-border (face-foreground 'default))
-  ;; (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-enable nil)
   (lsp-ui-sideline-show-hover nil)
   (lsp-ui-sideline-ignore-duplicate t)
   ;;  (lsp-ui-sideline-show-code-actions nil)
@@ -569,7 +569,6 @@
   :hook
   (typescript-mode . eslintd-fix-mode)
   (rxjs-mode . eslintd-fix-mode))
-
 
 (use-package jest :ensure t)
 
@@ -1030,6 +1029,13 @@
     (make-comint-in-buffer "shell" "*powershell*" powershell-prog)
     (switch-to-buffer buffer)
     (visual-line-mode 1)))
+
+(defun my/tslint-fix-current-buffer ()
+  "TSlints the current file/buffer"
+  (interactive)
+  (start-process-shell-command "tslint-autofix"
+                               "*tslint-autofix*"
+                               (concat "tslint --fix " (buffer-file-name))))
 
 (defun my/calc-ml-time (enum etime-sec)
   "Calculates time in mins and hours, given the number of epochs and time for each epoch in seconds"
