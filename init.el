@@ -72,12 +72,12 @@
                 web-mode-code-indent-offset 2
                 web-mode-style-padding 2
                 web-mode-script-padding 2)
+
   ;; Custom functions
-  ;; Hit C-c <tab> to auto-indent the entire buffer you're in.
   (defun indent-buffer ()
+    "Autoindent the whole buffer"
     (interactive)
     (indent-region (point-min) (point-max)))
-  (global-set-key (kbd "C-c <tab>") 'indent-buffer)
 
   (defun move-line-up ()
     "Move up the current line."
@@ -85,7 +85,6 @@
     (transpose-lines 1)
     (forward-line -2)
     (indent-according-to-mode))
-  (global-set-key (kbd "M-p") 'move-line-up)
 
   (defun move-line-down ()
     "Move down the current line."
@@ -94,7 +93,6 @@
     (transpose-lines 1)
     (forward-line -1)
     (indent-according-to-mode))
-  (global-set-key (kbd "M-n") 'move-line-down)
 
   (defun duplicate-line ()
     "Duplicates the current line."
@@ -106,8 +104,12 @@
       (newline)
       (yank)
       (move-to-column col)))
-  (global-set-key (kbd "M-'") 'duplicate-line)
 
+  :bind (:map global-map
+              ("C-c <tab>" . indent-buffer)
+              ("M-p" . move-line-up)
+              ("M-n" . move-line-down)
+              ("M-'" . duplicate-line))
   :custom
   (delete-selection-mode t)
   (scroll-step 1)
@@ -144,7 +146,6 @@
   :hook
   (before-save . delete-trailing-whitespace)
   :custom
-  ;;  (require-final-newline t)
   ;; backup settings
   (backup-by-copying t)
   (backup-directory-alist
@@ -255,12 +256,6 @@
   :ensure t
   :diminish rainbow-mode
   :hook prog-mode)
-
-;; Telegram
-;; (use-package telega
-;;   :ensure t
-;;   :defer t
-;;   :commands (telega))
 
 (use-package dashboard
   :ensure t
@@ -520,7 +515,6 @@
                ("C-c C-l" . js-load-file-and-go)))
   :mode
   ("\\.js$" . js2-mode)
-  ;;  ("\\.json$" . js2-jsx-mode)
   :config
   (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
   (custom-set-variables '(js2-strict-missing-semi-warning nil))
