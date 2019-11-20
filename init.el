@@ -79,6 +79,31 @@
     (indent-region (point-min) (point-max)))
   (global-set-key (kbd "C-c <tab>") 'indent-buffer)
 
+  (defun move-line-up ()
+    "Move up the current line."
+    (interactive)
+    (transpose-lines 1)
+    (forward-line -2)
+    (indent-according-to-mode))
+  (global-set-key (kbd "M-p") 'move-line-up)
+
+  (defun move-line-down ()
+    "Move down the current line."
+    (interactive)
+    (forward-line 1)
+    (transpose-lines 1)
+    (forward-line -1)
+    (indent-according-to-mode))
+  (global-set-key (kbd "M-n") 'move-line-down)
+
+  (defun duplicate-line ()
+    "Duplicates the current line"
+    (interactive)
+    (save-mark-and-excursion
+      (beginning-of-line)
+      (insert (thing-at-point 'line t))))
+  (global-set-key (kbd "M-'") 'duplicate-line)
+
   :custom
   (delete-selection-mode t)
   (scroll-step 1)
@@ -652,7 +677,7 @@
   :config
   (add-hook 'find-file-hook
             (lambda ()
-              (when (and (not (equal 'emacs-lisp-mode major-mode)) (not (equal 'solidity-mode major-mode)))
+              (unless (memq major-mode '(emacs-lisp-mode solidity-mode))
                 (flycheck-mode)))))
 
 (use-package flycheck-color-mode-line
