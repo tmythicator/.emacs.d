@@ -585,6 +585,9 @@
   :diminish
   :ensure t)
 
+;; JSON
+(use-package json-mode :ensure t)
+
 ;; Company
 (use-package company
   :ensure t
@@ -994,21 +997,10 @@
   :custom
   (tooltip-mode -1))
 
-;; (use-package color-theme-sanityinc-tomorrow
-;;   :ensure t
-;;   :config
-;;   (load-theme 'sanityinc-tomorrow-night t))
-
 (use-package silkworm-theme
   :ensure t
   :config
   (load-theme 'silkworm t))
-
-;; (use-package mood-one-theme
-;;   :ensure t
-;;   :config
-;;   (eval-after-load 'flycheck #'mood-one-theme-flycheck-fringe-bmp-enable)
-;;   :hook (after-init . (lambda () (load-theme 'mood-one t))))
 
 (use-package mood-line
   :ensure t
@@ -1036,13 +1028,6 @@
   (start-process-shell-command "tslint-autofix"
                                "*tslint-autofix*"
                                (concat "tslint --fix " (buffer-file-name))))
-
-(defun my/calc-ml-time (enum etime-sec)
-  "Calculates time in mins and hours, given the number of epochs and time for each epoch in seconds"
-  (interactive "nNumber of epochs? \nnHow much time does each epoch take? ")
-  (setq time-min (*(/ etime-sec 60) enum))
-  (setq time-hours (/ time-min 60))
-  (message "Time in min: %s. Time in hours: %s" time-min time-hours ))
 
 (defun my/play-media (file-path &optional
                                 minimized
