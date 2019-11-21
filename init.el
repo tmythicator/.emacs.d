@@ -325,6 +325,8 @@
 (use-package ob-restclient
   :ensure t)
 
+(use-package ob-async :ensure t)
+
 ;; Commenting
 (use-package smart-comment
   :ensure t
@@ -419,6 +421,7 @@
               ("C-c l s" . lsp-ui-find-workspace-symbol)
               ("C-c l d" . lsp-ui-doc-mode)
               ("C-c l i" . lsp-ui-imenu)
+              ("C-c l e" . lsp-ui-flycheck-list)
               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
               ([remap xref-find-references] . lsp-ui-peek-find-references))
   :custom
