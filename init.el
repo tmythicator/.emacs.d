@@ -1048,6 +1048,25 @@
     (switch-to-buffer buffer)
     (visual-line-mode 1)))
 
+(defun my/insert-change-id ()
+  "Generate change Id on the third line of the current buffer (gerrit)."
+  (interactive)
+  (let* ((charset "0123456789abcdef")
+         (number-of-hex-chars 40)
+         (base-count (length charset))
+         (res '())
+         (change-msg ""))
+
+    (dotimes (_ number-of-hex-chars)
+      (setq res (cons (elt charset (random base-count)) res)))
+
+    (setq change-msg (concat "Change-Id: I" res))
+    (goto-line 2)
+    (newline)
+    (insert change-msg)
+    (goto-line 1)
+    (move-beginning-of-line 1)))
+
 (defun my/tslint-fix-current-buffer ()
   "TSlints the current file/buffer"
   (interactive)
