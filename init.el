@@ -212,6 +212,8 @@
   :bind
   ("M-y" . counsel-yank-pop))
 
+(use-package amx :ensure t :defer t)
+
 (use-package counsel-world-clock
   :ensure t
   :after counsel)
