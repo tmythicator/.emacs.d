@@ -111,6 +111,7 @@
               ("M-n" . move-line-down)
               ("M-'" . duplicate-line))
   :custom
+  (default-input-method "german")
   (delete-selection-mode t)
   (scroll-step 1)
   (inhibit-startup-screen t "Don't show splash screen")
@@ -643,16 +644,16 @@
     :config
     (add-to-list 'company-backends 'company-shell))
 
-  (use-package company-try-hard
-    :commands company-try-hard
-    :bind ("C-\\" . company-try-hard)
-    :config
-    (bind-keys :map company-active-map
-               ("C-\\" . company-try-hard)))
+  ;; (use-package company-try-hard
+  ;;   :commands company-try-hard
+  ;;   :bind ("C-\\" . company-try-hard)
+  ;;   :config
+  ;;   (bind-keys :map company-active-map
+  ;;              ("C-\\" . company-try-hard)))
+
   :custom
   ;; Except when you're in term-mode/python-mode.
-  (company-global-modes '(not term-mode ;; python-mode
-                              ))
+  (company-global-modes '(not term-mode))
   ;; Give Company a decent default configuration.
   (company-idle-delay 0)
   (company-minimum-prefix-length 1)
@@ -1054,20 +1055,17 @@
   "Generate change Id on the third line of the current buffer (gerrit)."
   (interactive)
   (let* ((charset "0123456789abcdef")
-         (number-of-hex-chars 40)
          (base-count (length charset))
-         (res '())
-         (change-msg ""))
+         (number-of-hex-chars 40)
+         (res '()))
 
     (dotimes (_ number-of-hex-chars)
       (setq res (cons (elt charset (random base-count)) res)))
-
-    (setq change-msg (concat "Change-Id: I" res))
-    (goto-line 2)
-    (newline)
-    (insert change-msg)
+    (goto-line 3)
+    (move-beginning-of-line nil)
+    (insert (concat "Change-Id: I" res "?\n"))
     (goto-line 1)
-    (move-beginning-of-line 1)))
+    (move-beginning-of-line nil)))
 
 (defun my/tslint-fix-current-buffer ()
   "TSlints the current file/buffer"
