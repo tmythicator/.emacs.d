@@ -459,14 +459,16 @@
   :ensure t
   :after lsp
   :config
-
   (use-package dap-firefox)
-
   (dap-mode 1)
   (dap-ui-mode 1)
   ;; enables mouse hover support
   (dap-tooltip-mode 1)
-  (tooltip-mode 1))
+  (tooltip-mode 1)
+  :bind (:map dap-mode-map
+              ("<f7>" . dap-step-in)
+              ("<f8>" . dap-next)
+              ("<f9>" . dap-continue)))
 
 (use-package dap-java :after lsp-java)
 
