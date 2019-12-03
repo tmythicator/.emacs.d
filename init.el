@@ -466,9 +466,9 @@
   (dap-tooltip-mode 1)
   (tooltip-mode 1)
   :bind (:map dap-mode-map
-              ("<f7>" . dap-step-in)
-              ("<f8>" . dap-next)
-              ("<f9>" . dap-continue)))
+              ("<f6>" . dap-step-in)
+              ("<f7>" . dap-next)
+              ("<f8>" . dap-continue)))
 
 (use-package dap-java :after lsp-java)
 
@@ -865,8 +865,8 @@
   :custom
   (org-src-tab-acts-natively t)
   (org-todo-keyword-faces
-   '(("SAMPLE" . "yellow")
-     )))
+   '(("SAMPLE" . "red")
+     ("NONE" . "white"))))
 
 (use-package org-projectile
   :ensure t
