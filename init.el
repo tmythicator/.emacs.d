@@ -1073,7 +1073,7 @@
       (setq res (cons (elt charset (random base-count)) res)))
     (goto-line 3)
     (move-beginning-of-line nil)
-    (insert (concat "Change-Id: I" res "?\n"))
+    (insert (concat "Change-Id: I" res "\n"))
     (goto-line 1)
     (move-beginning-of-line nil)))
 
