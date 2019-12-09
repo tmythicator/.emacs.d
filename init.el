@@ -941,9 +941,21 @@
 (use-package dired-x
   :ensure nil)
 
-(use-package treemacs
+(use-package dired-sidebar
   :ensure t
-  :bind (("C-x C-n" . treemacs)))
+  :commands (dired-sidebar-toggle-sidebar)
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :custom
+  (dired-sidebar-subtree-line-prefix "<>")
+  (dired-sidebar-theme 'nerd))
+
+;; (use-package treemacs
+;;   :ensure t
+;;   :bind (("C-x C-n" . treemacs)))
+
+;; (use-package treemacs-projectile
+;;   :after treemacs projectile
+;;   :ensure t)
 
 (use-package dired-hide-dotfiles
   :ensure t
