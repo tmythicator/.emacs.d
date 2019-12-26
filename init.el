@@ -482,22 +482,22 @@
 
 (use-package cider :ensure t)
 
-;; ABAP stuff
-;; haven't found the workaround in windows yet
-(use-package abap
-  :if (eq system-type 'gnu/linux)
-  :quelpa
-  (abap :repo "qianmarv/sap-abap-mode"
-        :fetcher github
-        :version original))
+;; ;; ABAP stuff
+;; ;; haven't found the workaround in windows yet
+;; (use-package abap
+;;   :if (eq system-type 'gnu/linux)
+;;   :quelpa
+;;   (abap :repo "qianmarv/sap-abap-mode"
+;;         :fetcher github
+;;         :version original))
 
-(use-package abap-mode
-  :if (eq system-type 'gnu/linux)
-  :mode ("\\.abap\\'" . abap-mode)
-  :quelpa
-  (abap-mode :repo "qianmarv/ABAPInEmacs"
-             :fetcher github
-             :version original))
+;; (use-package abap-mode
+;;   :if (eq system-type 'gnu/linux)
+;;   :mode ("\\.abap\\'" . abap-mode)
+;;   :quelpa
+;;   (abap-mode :repo "qianmarv/ABAPInEmacs"
+;;              :fetcher github
+;;              :version original))
 
 ;; Python stuff
 (use-package python
