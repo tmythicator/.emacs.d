@@ -802,34 +802,6 @@
   ("C-c a" . org-agenda)
   :config
   (setq org-default-notes-file "~/Org/notes.org")
-  ;; Org-ref
-  (use-package org-ref
-    :ensure t
-    :init
-    (setq reftex-default-bibliography '("~/Bibliography/refs.bib"))
-    ;; see org-ref for use of these variables
-    (setq org-ref-bibliography-notes "~/Bibliography/notes.org"
-          org-ref-default-bibliography '("~/Bibliography/refs.bib")
-          org-ref-pdf-directory "~/Bibliography/bibtex-pdfs/")
-    (setq helm-bibtex-bibliography "~/Bibliography/refs.bib")
-    (setq helm-bibtex-library-path "~/Bibliography/bibtex-pdfs/")
-    (setq helm-bibtex-pdf-open-function
-          (lambda (fpath)
-            (start-process "open" "*open*" "open" fpath)))
-    :config
-    ;; variables that control bibtex key format for auto-generation
-    ;; I want firstauthor-year-title-words
-    ;; this usually makes a legitimate filename to store pdfs under.
-    (setq bibtex-autokey-year-length 4
-          bibtex-autokey-name-year-separator "-"
-          bibtex-autokey-year-title-separator "-"
-          bibtex-autokey-titleword-separator "-"
-          bibtex-autokey-titlewords 2
-          bibtex-autokey-titlewords-stretch 1
-          bibtex-autokey-titleword-length 5)
-    :custom
-    (org-ref-completion-library 'org-ref-ivy-cite))
-
   ;; Open PDF with pdfview
   (use-package org-pdfview :ensure t)
   (add-to-list 'org-file-apps
