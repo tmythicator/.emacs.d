@@ -73,6 +73,7 @@
                 web-mode-style-padding 2
                 web-mode-script-padding 2)
 
+  (load-theme 'leuven t)
   ;; Custom functions
   (defun indent-buffer ()
     "Autoindent the whole buffer"
@@ -1008,10 +1009,10 @@
   :custom
   (tooltip-mode -1))
 
-(use-package silkworm-theme
-  :ensure t
-  :config
-  (load-theme 'silkworm t))
+;; (use-package silkworm-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'silkworm t))
 
 (use-package mood-line
   :ensure t
