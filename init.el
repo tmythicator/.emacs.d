@@ -108,6 +108,7 @@
 
   :bind (:map global-map
               ("C-c <tab>" . indent-buffer)
+              ("M-i" . imenu)
               ("M-p" . move-line-up)
               ("M-n" . move-line-down)
               ("M-'" . duplicate-line))
