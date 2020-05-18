@@ -648,13 +648,6 @@
     :config
     (add-to-list 'company-backends 'company-shell))
 
-  ;; (use-package company-try-hard
-  ;;   :commands company-try-hard
-  ;;   :bind ("C-\\" . company-try-hard)
-  ;;   :config
-  ;;   (bind-keys :map company-active-map
-  ;;              ("C-\\" . company-try-hard)))
-
   :custom
   ;; Except when you're in term-mode/python-mode.
   (company-global-modes '(not term-mode))
@@ -901,6 +894,23 @@
   (global-git-gutter-mode t)
   :diminish git-gutter-mode)
 
+;; Travel back in git
+(use-package git-timemachine
+  :ensure t
+  :defer t)
+
+
+;; Docker/Kubernetes things
+(use-package docker
+  :ensure t
+  :bind
+  (:map mode-specific-map
+        ("d" . docker)))
+
+(use-package dockerfile-mode
+  :ensure t
+  :mode "Dockerfile\\'")
+
 ;;Dired things
 (use-package dired
   :ensure nil
@@ -923,13 +933,11 @@
   (dired-sidebar-subtree-line-prefix "<>")
   (dired-sidebar-theme 'nerd))
 
-;; (use-package treemacs
-;;   :ensure t
-;;   :bind (("C-x C-n" . treemacs)))
-
-;; (use-package treemacs-projectile
-;;   :after treemacs projectile
-;;   :ensure t)
+(use-package dired-git-info
+  :ensure t
+  :bind
+  (:map dired-mode-map
+        (")" . dired-git-info-mode)))
 
 (use-package dired-hide-dotfiles
   :ensure t
@@ -1009,11 +1017,6 @@
   :defer t
   :custom
   (tooltip-mode -1))
-
-;; (use-package silkworm-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'silkworm t))
 
 (use-package mood-line
   :ensure t
