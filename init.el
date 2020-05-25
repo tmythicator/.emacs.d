@@ -541,15 +541,11 @@
     (defun my-js-mode-hook ()
       "Hook for `js-mode'."
       (set (make-local-variable 'company-backends)
-           '((company-tern company-files))))
+           '((company-files))))
     (add-hook 'js2-mode-hook 'my-js-mode-hook)
     (add-hook 'js2-mode-hook 'company-mode))
 
   (add-hook 'js2-mode-hook 'tern-mode)
-
-  ;; company backend for tern
-  ;; http://ternjs.net/doc/manual.html#emacs
-  (use-package company-tern :ensure t)
 
   ;; Run a JavaScript interpreter in an inferior process window
   ;; https://github.com/redguardtoo/js-comint
@@ -797,11 +793,6 @@
   ("C-c a" . org-agenda)
   :config
   (setq org-default-notes-file "~/Org/notes.org")
-  ;; Open PDF with pdfview
-  (use-package org-pdfview :ensure t)
-  (add-to-list 'org-file-apps
-               '("\\.pdf\\'" . (lambda (file link)
-                                 (org-pdfview-open link))))
   ;; Should normaly support russian
   (setq org-latex-compiler "xelatex")
   ;; Set default inline image width
@@ -881,11 +872,6 @@
   :custom
   (magit-completing-read-function 'ivy-completing-read "Force Ivy usage.")
   :bind ("C-x g" . magit-status))
-
-(use-package magit-gerrit
-  :ensure t
-  :config
-  (setq-default magit-gerrit-remote "gerrit"))
 
 ;; Mark uncommitted changes in the fringe.
 (use-package git-gutter-fringe
