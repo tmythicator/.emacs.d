@@ -911,13 +911,13 @@
 (use-package dired-x
   :ensure nil)
 
-(use-package dired-sidebar
-  :ensure t
-  :commands (dired-sidebar-toggle-sidebar)
-  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :custom
-  (dired-sidebar-subtree-line-prefix "<>")
-  (dired-sidebar-theme 'nerd))
+;; (use-package dired-sidebar
+;;   :ensure t
+;;   :commands (dired-sidebar-toggle-sidebar)
+;;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+;;   :custom
+;;   (dired-sidebar-subtree-line-prefix "<>")
+;;   (dired-sidebar-theme 'nerd))
 
 (use-package dired-git-info
   :ensure t
@@ -941,6 +941,28 @@
   :bind
   (:map dired-mode-map
         ("r" . dired-rsync)))
+
+;; Treemacs
+(use-package treemacs
+  :ensure t
+  :defer t
+  :bind
+  (:map global-map
+        ("C-x C-n" . treemacs)
+        ("C-x t b" . treemacs-bookmark)))
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
 
 ;; Help things
 (use-package which-key
