@@ -128,11 +128,11 @@
   (require-final-newline nil))
 
 ;; Emacs Window Manager
-;; (use-package exwm
-;;   :ensure t
-;;   :config
-;;   (use-package exwm-config
-;;     :config (exwm-config-default)))
+(use-package exwm
+  :ensure t
+  :config
+  (use-package exwm-config
+    :config (exwm-config-default)))
 
 (use-package autorevert
   :diminish auto-revert-mode)
@@ -343,6 +343,10 @@
   :ensure t
   :config
   (exec-path-from-shell-initialize))
+
+(use-package load-bash-alias
+  :if (eq system-type 'gnu/linux)
+  :ensure t)
 
 (use-package bash-completion
   :commands bash-completion-dynamic-complete
