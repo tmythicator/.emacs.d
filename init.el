@@ -182,6 +182,7 @@
   :ensure t
   :commands smartparens-global-mode
   :config
+  (use-package smartparens-config)
   (smartparens-global-mode 1))
 
 (use-package paren
@@ -465,7 +466,25 @@
   :ensure t
   :after lsp
   :config
-  (use-package dap-firefox)
+
+  (use-package dap-firefox
+    :config
+    (dap-firefox-setup)
+    (dap-register-debug-template "Custom Firefox Debug Config"
+                                 (list :type "firefox"
+                                       :cwd nil
+                                       :request "launch"
+                                       :file nil
+                                       :url "http://localhost:3000"
+                                       :webRoot "${workspaceRoot}/src"
+                                       :reAttach t
+                                       :program nil
+                                       :name "Custom Firefox::Run")))
+
+  (use-package dap-node
+    :config
+    (dap-node-setup))
+
   (dap-mode 1)
   (dap-ui-mode 1)
   ;; enables mouse hover support
@@ -487,6 +506,9 @@
   :defer t)
 
 (use-package cider :ensure t)
+
+;; Groovy
+(use-package groovy-mode :ensure t)
 
 ;; ;; ABAP stuff
 ;; ;; haven't found the workaround in windows yet
@@ -1005,11 +1027,6 @@
    (after-init . global-emojify-mode)))
 
 (use-package all-the-icons :ensure t)
-
-(use-package all-the-icons-dired
-  :ensure t
-  :hook
-  (dired-mode . all-the-icons-dired-mode))
 
 (use-package tool-bar
   :config
