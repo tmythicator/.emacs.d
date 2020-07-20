@@ -134,6 +134,14 @@
   (use-package exwm-config
     :config (exwm-config-default)))
 
+(use-package expand-region
+  :ensure t
+  :bind
+  (("C-'" . er/expand-region )
+   ("C-;" . er/contract-region))
+  :config
+  (pending-delete-mode t))
+
 (use-package autorevert
   :diminish auto-revert-mode)
 
@@ -180,7 +188,6 @@
 ;; Parentheses + hline
 (use-package smartparens
   :ensure t
-  :commands smartparens-global-mode
   :config
   (use-package smartparens-config)
   (smartparens-global-mode 1))
