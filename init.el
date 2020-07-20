@@ -136,9 +136,9 @@
 
 (use-package expand-region
   :ensure t
-  :bind
-  (("C-'" . er/expand-region )
-   ("C-;" . er/contract-region))
+  :bind (:map global-map
+              (("C-'" . er/expand-region )
+               ("C-;" . er/contract-region)))
   :config
   (pending-delete-mode t))
 
