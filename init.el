@@ -73,7 +73,6 @@
                 web-mode-style-padding 2
                 web-mode-script-padding 2)
 
-  (load-theme 'leuven t)
   ;; Custom functions
   (defun indent-buffer ()
     "Autoindent the whole buffer"
@@ -418,6 +417,7 @@
   (lsp-auto-guess-root nil)
   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
   :bind (:map lsp-mode-map
+              ("C-c l a" . lsp-execute-code-action)
               ("C-c l f" . lsp-format-buffer)
               ("C-c l l" . lsp-find-references)
               ("C-c l o" . lsp-organize-imports)
@@ -1061,7 +1061,6 @@
 ;; Transparency
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
 (set-frame-parameter nil 'alpha '(95 . 75))
-(display-time-mode 1)
 (fringe-mode 10)
 
 ;; Functions
