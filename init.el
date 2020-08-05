@@ -58,14 +58,13 @@
   ;; Coffeescript
   (setq-default coffee-tab-width 2)
   ;; Typescript
-  (setq-default typescript-indent-level 4
-                typescript-expr-indent-offset 2)
+  (setq-default typescript-indent-level 4)
   ;; Python
   (setq-default py-indent-offset 2)
   ;; XML
   (setq-default nxml-child-indent 2)
-  ;; C
-  (setq-default c-basic-offset 2)
+  ;; C/Java (lsp)
+  (setq-default c-basic-offset 4)
   ;; HTML etc with web-mode
   (setq-default web-mode-markup-indent-offset 2
                 web-mode-css-indent-offset 2
@@ -691,15 +690,6 @@
   (company-dabbrev-ignore-case nil)
   :hook
   (after-init . global-company-mode))
-
-(use-package company-lsp
-  :ensure t
-  :config
-  (push 'company-lsp company-backends)
-  :custom
-  (company-lsp-async t)
-  (company-lsp-cache-candidates 'auto)
-  (company-lsp-match-candidate-predicate #'company-lsp-match-candidate-flex))
 
 ;; Flycheck
 (use-package flycheck
