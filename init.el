@@ -421,7 +421,7 @@
               ("C-c l o" . lsp-organize-imports)
               ("C-c l r" . lsp-rename))
 
-  :hook ((java-mode python-mode typescript-mode js2-mode c-mode c++-mode) . lsp))
+  :hook ((java-mode python-mode typescript-mode web-mode js2-mode c-mode c++-mode) . lsp))
 
 (use-package lsp-ui
   :ensure t
@@ -550,11 +550,16 @@
 (use-package rjsx-mode
   :ensure t
   :mode
-  ("\\.js$" . rjsx-mode))
+  (("\\.js$" . rjsx-mode)
+   ("\\.jsx$" . rjsx-mode)))
 
 (use-package typescript-mode
   :ensure t
-  :mode("\\.tsx$" . typescript-mode))
+  :mode ("\\.ts$" . typescript-mode))
+
+(use-package web-mode
+  :ensure t
+  :mode ("\\.tsx$" . web-mode))
 
 (use-package ts-comint
   :ensure t
@@ -579,10 +584,6 @@
 
 ;; Autofix missing imports.
 (use-package import-js :ensure t)
-
-(use-package web-mode
-  :diminish
-  :ensure t)
 
 ;; JSON
 (use-package json-mode :ensure t)
