@@ -407,7 +407,6 @@
   :hook
   (emacs-lisp-mode . eros-mode))
 
-
 ;; LSP-mode
 (use-package lsp-mode
   :ensure t
@@ -547,64 +546,7 @@
   :bind ("C-c r" . ipython-shell-send-region)
   :hook (python-mode-hook))
 
-;; JS/TS/React stuff
-(use-package js2-mode
-  :ensure t
-  :bind (:map js2-mode-map
-              (("C-x C-e" . js-send-last-sexp)
-               ("C-M-x" . js-send-last-sexp-and-go)
-               ("C-c C-b" . js-send-buffer-and-go)
-               ("C-c C-l" . js-load-file-and-go)))
-  :mode
-  ("\\.js$" . js2-mode)
-  :config
-  (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
-  (custom-set-variables '(js2-strict-missing-semi-warning nil))
-
-  (setq js-indent-level 2)
-  (setq js2-indent-level 2)
-  (setq js2-basic-offset 2)
-
-  ;; tern :- IDE like features for javascript and completion
-  ;; http://ternjs.net/doc/manual.html#emacs
-  (use-package tern
-    :ensure t
-    :config
-    (defun my-js-mode-hook ()
-      "Hook for `js-mode'."
-      (set (make-local-variable 'company-backends)
-           '((company-files))))
-    (add-hook 'js2-mode-hook 'my-js-mode-hook)
-    (add-hook 'js2-mode-hook 'company-mode))
-
-  (add-hook 'js2-mode-hook 'tern-mode)
-
-  ;; Run a JavaScript interpreter in an inferior process window
-  ;; https://github.com/redguardtoo/js-comint
-  (use-package js-comint
-    :ensure t
-    :config
-    (setq inferior-js-program-command "node")
-    (add-hook 'js2-mode-hook
-              (lambda ()
-                (local-set-key (kbd "C-x C-e") 'js-send-last-sexp)
-                (local-set-key (kbd "C-c b") 'js-send-buffer)
-                (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go))))
-
-  ;; js2-refactor :- refactoring options for emacs
-  ;; https://github.com/magnars/js2-refactor.el
-  (use-package js2-refactor
-    :ensure t
-    :defer t
-    :diminish js2-refactor-mode
-    :config
-    (js2r-add-keybindings-with-prefix "C-c j r"))
-  (add-hook 'js2-mode-hook 'js2-refactor-mode))
-
-(use-package react-snippets :ensure t)
-
-(use-package js-react-redux-yasnippets :ensure t)
-
+;; ;; JS/TS/React stuff
 (use-package rjsx-mode
   :ensure t
   :mode
@@ -625,11 +567,7 @@
               (local-set-key (kbd "C-c C-b") 'ts-send-buffer-and-go)
               (local-set-key (kbd "C-c l") 'ts-load-file-and-go))))
 
-(use-package eslintd-fix
-  :ensure t
-  :hook
-  (typescript-mode . eslintd-fix-mode)
-  (rxjs-mode . eslintd-fix-mode))
+(use-package eslintd-fix :ensure t)
 
 (use-package jest :ensure t)
 
@@ -708,15 +646,6 @@
     (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)))
 
 ;; Whitespaces
-(use-package ethan-wspace
-  :ensure t
-  :demand t
-  :commands global-ethan-wspace-mode
-  :config
-  (global-ethan-wspace-mode 1)
-  :bind ("C-c c" . ethan-wspace-clean-all)
-  :diminish ethan-wspace-mode)
-
 (use-package shrink-whitespace
   :ensure t
   :commands shrink-whitespace
@@ -908,7 +837,6 @@
   :ensure t
   :defer t)
 
-
 ;; Docker/Kubernetes things
 (use-package docker
   :ensure t
@@ -933,14 +861,6 @@
 
 (use-package dired-x
   :ensure nil)
-
-;; (use-package dired-sidebar
-;;   :ensure t
-;;   :commands (dired-sidebar-toggle-sidebar)
-;;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-;;   :custom
-;;   (dired-sidebar-subtree-line-prefix "<>")
-;;   (dired-sidebar-theme 'nerd))
 
 (use-package dired-git-info
   :ensure t
