@@ -65,12 +65,6 @@
   (setq-default nxml-child-indent 2)
   ;; C/Java (lsp)
   (setq-default c-basic-offset 4)
-  ;; HTML etc with web-mode
-  (setq-default web-mode-markup-indent-offset 2
-                web-mode-css-indent-offset 2
-                web-mode-code-indent-offset 2
-                web-mode-style-padding 2
-                web-mode-script-padding 2)
 
   ;; Custom functions
   (defun indent-buffer ()
@@ -559,7 +553,13 @@
 
 (use-package web-mode
   :ensure t
-  :mode ("\\.tsx$" . web-mode))
+  :mode ("\\.tsx$" . web-mode)
+  :custom
+  (web-mode-markup-indent-offset 4)
+  (web-mode-css-indent-offset 4)
+  (web-mode-code-indent-offset 4)
+  (web-mode-style-padding 4)
+  (web-mode-script-padding 4))
 
 (use-package ts-comint
   :ensure t
