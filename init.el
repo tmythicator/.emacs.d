@@ -415,16 +415,14 @@
               ("C-c l o" . lsp-organize-imports)
               ("C-c l r" . lsp-rename))
 
-  :hook ((java-mode python-mode typescript-mode web-mode js2-mode c-mode c++-mode) . lsp))
+  :hook(((java-mode python-mode typescript-mode web-mode js2-mode c-mode c++-mode) . lsp)
+        (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
   :ensure t
   :after lsp-mode
   :diminish
   :commands lsp-ui-mode
-  :custom-face
-  (lsp-ui-doc-background ((t (:background nil))))
-  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
   :bind (:map lsp-ui-mode-map
               ("C-c l c" . lsp-ui-sideline-apply-code-actions)
               ("C-c l s" . lsp-ui-find-workspace-symbol)
@@ -439,7 +437,7 @@
   (lsp-ui-doc-header t)
   (lsp-ui-doc-include-signature t)
   (lsp-ui-doc-position 'top)
-  (lsp-ui-doc-border (face-foreground 'default))
+  ;; (lsp-ui-doc-border (face-foreground 'default))
   (lsp-ui-sideline-enable nil)
   (lsp-ui-sideline-show-hover nil)
   (lsp-ui-sideline-ignore-duplicate t)
@@ -451,6 +449,14 @@
   ;; https://github.com/emacs-lsp/lsp-ui/issues/243
   (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
     (setq mode-line-format nil)))
+
+(use-package lsp-ivy
+  :ensure t
+  :commands lsp-ivy-workspace-symbol)
+
+(use-package lsp-treemacs
+  :ensure t
+  :commands lsp-treemacs-errors-list)
 
 ;; JAVA
 (use-package lsp-java
@@ -603,12 +609,6 @@
     (company-quickhelp-mode 1)
     :custom
     (company-quickhelp-delay 3))
-
-  ;; Add a completion source for emoji. 😸
-  (use-package company-emoji
-    :ensure t
-    :config
-    (company-emoji-init))
 
   (use-package company-shell
     :ensure t
