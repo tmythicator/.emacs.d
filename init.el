@@ -933,17 +933,6 @@
   :bind (:map ctl-x-map
               ("M-s" . sudo-edit)))
 
-;; Ricing
-(use-package emojify
-  :ensure t
-  :custom
-  ;; Set emojify to only replace Unicode emoji, and do it everywhere.
-  (emojify-emoji-styles '(unicode))
-  (emojify-inhibit-major-modes '())
-  :hook
-  ((after-init . global-emojify-mode-line-mode)
-   (after-init . global-emojify-mode)))
-
 (use-package all-the-icons :ensure t)
 
 (use-package tool-bar
