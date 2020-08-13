@@ -517,20 +517,20 @@
 
 ;; ;; ABAP stuff
 ;; ;; haven't found the workaround in windows yet
-;; (use-package abap
-;;   :if (eq system-type 'gnu/linux)
-;;   :quelpa
-;;   (abap :repo "qianmarv/sap-abap-mode"
-;;         :fetcher github
-;;         :version original))
+(use-package abap
+  :if (eq system-type 'gnu/linux)
+  :quelpa
+  (abap :repo "qianmarv/sap-abap-mode"
+        :fetcher github
+        :version original))
 
-;; (use-package abap-mode
-;;   :if (eq system-type 'gnu/linux)
-;;   :mode ("\\.abap\\'" . abap-mode)
-;;   :quelpa
-;;   (abap-mode :repo "qianmarv/ABAPInEmacs"
-;;              :fetcher github
-;;              :version original))
+(use-package abap-mode
+  :if (eq system-type 'gnu/linux)
+  :mode ("\\.abap\\'" . abap-mode)
+  :quelpa
+  (abap-mode :repo "qianmarv/ABAPInEmacs"
+             :fetcher github
+             :version original))
 
 ;; Python stuff
 (use-package python
@@ -553,13 +553,10 @@
   (("\\.js$" . rjsx-mode)
    ("\\.jsx$" . rjsx-mode)))
 
-(use-package typescript-mode
-  :ensure t
-  :mode ("\\.ts$" . typescript-mode))
-
 (use-package web-mode
   :ensure t
-  :mode ("\\.tsx$" . web-mode)
+  :mode (("\\.ts$" . web-mode)
+         ("\\.tsx$" . web-mode))
   :custom
   (web-mode-markup-indent-offset 4)
   (web-mode-css-indent-offset 4)
