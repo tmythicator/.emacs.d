@@ -4,6 +4,11 @@
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
+;; Enable native compilation, if possible
+(when (and (fboundp 'native-comp-available-p)
+           (native-comp-available-p))
+  (setq comp-deferred-compilation t))
+
 (setq package-enable-at-startup nil)
 (package-initialize)
 
