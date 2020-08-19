@@ -4,13 +4,8 @@
         ("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")))
 
-;; Enable native compilation, if possible
-(when (and (fboundp 'native-comp-available-p)
-           (native-comp-available-p))
-  (setq comp-deferred-compilation t))
-
-(setq package-enable-at-startup nil)
-(package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -54,6 +49,7 @@
   (put 'narrow-to-region 'disabled nil)
   (put 'downcase-region 'disabled nil)
   :config
+  (delete-selection-mode t)
   ;; Set default indentation for various languages (add your own!)
   (setq-default tab-width 2)
   ;; Javascript
@@ -111,7 +107,6 @@
               ("M-'" . duplicate-line))
   :custom
   (default-input-method "german")
-  (delete-selection-mode t)
   (scroll-step 1)
   (inhibit-startup-screen t "Don't show splash screen")
   (use-dialog-box nil "Disable dialog boxes")
@@ -825,7 +820,7 @@
 (use-package magit
   :ensure t
   :custom
-  (magit-completing-read-function 'ivy-completing-read "Force Ivy usage.")
+  (magit-completing-read-function 'ivy-completing-read)
   :bind ("C-x g" . magit-status))
 
 ;; Mark uncommitted changes in the fringe.
