@@ -363,8 +363,6 @@
 
 (use-package em-term
   :custom
-  ;; Visual commands are commands which require a proper terminal
-  ;; eshell will run them in a term buffer when you invoke them.
   (eshell-visual-commands
    '("pip" "pipenv" "npm" "mvn" "tmux" "htop" "top"))
   (eshell-visual-subcommands
@@ -626,6 +624,16 @@
   (company-dabbrev-ignore-case nil)
   :hook
   (after-init . global-company-mode))
+
+(use-package emojify
+  :ensure t
+  :hook (after-init . global-emojify-mode))
+
+(use-package company-emoji
+  :ensure t
+  :after company
+  :config
+  (company-emoji-init))
 
 ;; Flycheck
 (use-package flycheck
