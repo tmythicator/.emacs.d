@@ -612,7 +612,7 @@
 
   :custom
   ;; Except when you're in term-mode/python-mode.
-  (company-global-modes '(not term-mode))
+  ;; (company-global-modes '(not term-mode))
   ;; Give Company a decent default configuration.
   (company-idle-delay 0)
   (company-minimum-prefix-length 1)
@@ -624,6 +624,11 @@
   (company-dabbrev-ignore-case nil)
   :hook
   (after-init . global-company-mode))
+
+;; With use-package:
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode))
 
 (use-package emojify
   :ensure t
@@ -771,6 +776,7 @@
    '((python . t)
      (shell . t)
      (java . t)
+     (sql . t)
      (restclient . t)))
 
   (setq org-latex-pdf-process
