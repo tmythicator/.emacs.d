@@ -122,9 +122,10 @@
 ;; Emacs Window Manager
 (use-package exwm
   :ensure t
-  :config
-  (use-package exwm-config
-    :config (exwm-config-default)))
+  ;; :config
+  ;; (use-package exwm-config
+  ;; :config (exwm-config-default))
+  )
 
 (use-package expand-region
   :ensure t
@@ -562,16 +563,14 @@
   (web-mode-style-padding 4)
   (web-mode-script-padding 4))
 
-(use-package ts-comint
+(use-package js-comint
   :ensure t
   :config
-  (add-hook 'typescript-mode-hook
+  (add-hook 'js2--mode-hook
             (lambda ()
-              (local-set-key (kbd "C-x C-e") 'ts-send-last-sexp)
-              (local-set-key (kbd "C-M-x") 'ts-send-last-sexp-and-go)
-              (local-set-key (kbd "C-c b") 'ts-send-buffer)
-              (local-set-key (kbd "C-c C-b") 'ts-send-buffer-and-go)
-              (local-set-key (kbd "C-c l") 'ts-load-file-and-go))))
+              (local-set-key (kbd "C-x C-e") 'js-send-last-sexp)
+              (local-set-key (kbd "C-c b") 'js-send-buffer)
+              (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go))))
 
 (use-package eslintd-fix :ensure t)
 
