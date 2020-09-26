@@ -125,7 +125,7 @@
   ;; :config
   ;; (use-package exwm-config
   ;; :config (exwm-config-default))
-  )
+)
 
 (use-package expand-region
   :ensure t
