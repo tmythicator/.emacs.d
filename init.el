@@ -386,7 +386,7 @@
 (use-package em-term
   :custom
   (eshell-visual-commands
-   '("pip" "pipenv" "npm" "mvn" "tmux" "htop" "top"))
+   '("pip" "pipenv" "source" "npm" "mvn" "tmux" "htop" "top"))
   (eshell-visual-subcommands
    '(("git" "log" "l" "diff" "show"))))
 
@@ -435,7 +435,7 @@
               ("C-c l o" . lsp-organize-imports)
               ("C-c l r" . lsp-rename))
 
-  :hook(((java-mode python-mode typescript-mode web-mode js2-mode c-mode c++-mode) . lsp)
+  :hook(((java-mode typescript-mode web-mode js2-mode c-mode c++-mode) . lsp)
         (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
@@ -537,20 +537,20 @@
 
 ;; ;; ABAP stuff
 ;; ;; haven't found the workaround in windows yet
-(use-package abap
-  :if (eq system-type 'gnu/linux)
-  :quelpa
-  (abap :repo "qianmarv/sap-abap-mode"
-        :fetcher github
-        :version original))
+;; (use-package abap
+;;   :if (eq system-type 'gnu/linux)
+;;   :quelpa
+;;   (abap :repo "qianmarv/sap-abap-mode"
+;;         :fetcher github
+;;         :version original))
 
-(use-package abap-mode
-  :if (eq system-type 'gnu/linux)
-  :mode ("\\.abap\\'" . abap-mode)
-  :quelpa
-  (abap-mode :repo "qianmarv/ABAPInEmacs"
-             :fetcher github
-             :version original))
+;; (use-package abap-mode
+;;   :if (eq system-type 'gnu/linux)
+;;   :mode ("\\.abap\\'" . abap-mode)
+;;   :quelpa
+;;   (abap-mode :repo "qianmarv/ABAPInEmacs"
+;;              :fetcher github
+;;              :version original))
 
 ;; Python stuff
 (use-package python
@@ -558,8 +558,19 @@
   (python-shell-interpreter "ipython")
   (python-shell-interpreter-args "--simple-prompt --pprint"))
 
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))
+
 (use-package pyvenv
-  :ensure t)
+  :ensure t
+  :diminish
+  :config
+  (setq pyvenv-mode-line-indicator
+        '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
+  (pyvenv-mode +1))
 
 (use-package ipython-shell-send
   :ensure t
