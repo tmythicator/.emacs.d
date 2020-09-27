@@ -120,12 +120,7 @@
   (require-final-newline nil))
 
 ;; Emacs Window Manager
-(use-package exwm
-  :ensure t
-  ;; :config
-  ;; (use-package exwm-config
-  ;; :config (exwm-config-default))
-)
+(use-package exwm :ensure t)
 
 (use-package expand-region
   :ensure t
@@ -177,6 +172,27 @@
 (use-package frame
   :bind
   ("C-z" . nil))
+
+(use-package centaur-tabs
+  :ensure t
+  :config
+  (setq centaur-tabs-style "bar"
+	      centaur-tabs-height 32
+	      centaur-tabs-set-icons t
+	      centaur-tabs-set-modified-marker t
+	      centaur-tabs-show-navigation-buttons t
+	      centaur-tabs-set-bar 'under
+	      x-underline-at-descent-line t)
+  (centaur-tabs-mode t)
+  :hook
+  (dashboard-mode . centaur-tabs-local-mode)
+  (term-mode . centaur-tabs-local-mode)
+  (calendar-mode . centaur-tabs-local-mode)
+  (org-agenda-mode . centaur-tabs-local-mode)
+  (helpful-mode . centaur-tabs-local-mode)
+  :bind
+  ("C-<prior>" . centaur-tabs-backward)
+  ("C-<next>" . centaur-tabs-forward))
 
 ;; Parentheses + hline
 (use-package smartparens
@@ -623,11 +639,6 @@
   (company-dabbrev-ignore-case nil)
   :hook
   (after-init . global-company-mode))
-
-;; With use-package:
-(use-package company-box
-  :ensure t
-  :hook (company-mode . company-box-mode))
 
 (use-package emojify
   :ensure t
