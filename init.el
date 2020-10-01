@@ -106,6 +106,10 @@
               ("M-n" . move-line-down)
               ("M-'" . duplicate-line))
   :custom
+  ;; Long text scanning improvements
+  (bidi-inhibit-bpa t)
+  (global-so-long-mode t)
+
   (default-input-method "german")
   (scroll-step 1)
   (inhibit-startup-screen t "Don't show splash screen")
@@ -188,6 +192,7 @@
   (dashboard-mode . centaur-tabs-local-mode)
   (term-mode . centaur-tabs-local-mode)
   (eshell-mode . centaur-tabs-local-mode)
+  (vterm-mode . centaur-tabs-local-mode)
   (calendar-mode . centaur-tabs-local-mode)
   (org-agenda-mode . centaur-tabs-local-mode)
   (helpful-mode . centaur-tabs-local-mode)
@@ -412,8 +417,14 @@
   (eshell-toggle-use-projectile-root t)
   (eshell-toggle-run-command nil)
   (eshell-toggle-size-fraction 5)
+  (eshell-toggle-init-function #'vterm)
   :bind
   ("M-`" . eshell-toggle))
+
+
+;; Shell
+(use-package vterm
+  :ensure t)
 
 ;; Elisp stuff
 (use-package eros
