@@ -108,7 +108,6 @@
   :custom
   ;; Long text scanning improvements
   (bidi-inhibit-bpa t)
-  (global-so-long-mode t)
 
   (default-input-method "german")
   (scroll-step 1)
@@ -122,6 +121,12 @@
   (sentence-end-double-space nil)
   (mode-require-final-newline nil)
   (require-final-newline nil))
+
+(use-package so-long
+  :config
+  (global-so-long-mode t)
+  :custom
+  (so-long-threshold 400))
 
 ;; Emacs Window Manager
 (use-package exwm :ensure t)
