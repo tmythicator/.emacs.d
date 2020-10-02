@@ -422,7 +422,7 @@
   (eshell-toggle-use-projectile-root t)
   (eshell-toggle-run-command nil)
   (eshell-toggle-size-fraction 5)
-  (eshell-toggle-init-function #'vterm)
+  ;; (eshell-toggle-init-function #'vterm) ;; To experimental for my taste
   :bind
   ("M-`" . eshell-toggle))
 
