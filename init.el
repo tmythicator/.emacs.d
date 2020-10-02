@@ -394,11 +394,10 @@
   (setup-esh-help-eldoc))
 
 (use-package em-term
+  :config
+  (add-to-list 'eshell-visual-commands '("pip" "pipenv" "npm" "mvn"))
   :custom
-  (eshell-visual-commands
-   '("pip" "pipenv" "source" "npm" "mvn" "tmux" "htop" "top"))
-  (eshell-visual-subcommands
-   '(("git" "log" "l" "diff" "show"))))
+  (eshell-destroy-buffer-when-process-dies t))
 
 (use-package esh-autosuggest
   :ensure t
