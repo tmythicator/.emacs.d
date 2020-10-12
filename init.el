@@ -551,13 +551,12 @@
 (use-package groovy-mode :ensure t)
 
 ;; ;; ABAP stuff
-;; ;; haven't found the workaround in windows yet
-;; (use-package abap
-;;   :if (eq system-type 'gnu/linux)
-;;   :quelpa
-;;   (abap :repo "qianmarv/sap-abap-mode"
-;;         :fetcher github
-;;         :version original))
+(use-package abap
+  :if (eq system-type 'gnu/linux)
+  :quelpa
+  (abap :repo "qianmarv/sap-abap-mode"
+        :fetcher github
+        :version original))
 
 ;; (use-package abap-mode
 ;;   :if (eq system-type 'gnu/linux)
