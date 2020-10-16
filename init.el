@@ -394,9 +394,10 @@
   (setup-esh-help-eldoc))
 
 (use-package em-term
-  :config
-  (add-to-list 'eshell-visual-commands '("pip" "pipenv" "npm" "mvn"))
   :custom
+  (eshell-visual-commands
+   `(,@eshell-visual-commands
+     "pip" "pipenv" "npm" "mvn"))
   (eshell-destroy-buffer-when-process-dies t))
 
 (use-package esh-autosuggest
@@ -427,8 +428,8 @@
 
 
 ;; Shell
-(use-package vterm
-  :ensure t)
+;; (use-package vterm
+;;   :ensure t)
 
 ;; Elisp stuff
 (use-package eros
