@@ -394,10 +394,11 @@
   (setup-esh-help-eldoc))
 
 (use-package em-term
+  :config
+  (setq eshell-visual-commands
+        `(,@eshell-visual-commands
+          "pip" "pipenv" "npm" "mvn"))
   :custom
-  (eshell-visual-commands
-   `(,@eshell-visual-commands
-     "pip" "pipenv" "npm" "mvn"))
   (eshell-destroy-buffer-when-process-dies t))
 
 (use-package esh-autosuggest
