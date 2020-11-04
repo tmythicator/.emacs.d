@@ -120,7 +120,10 @@
   ;; Indentation and things
   (sentence-end-double-space nil)
   (mode-require-final-newline nil)
-  (require-final-newline nil))
+  (require-final-newline nil)
+  ;; For LSP
+  (read-process-output-max (* 1024 1024))
+  (gc-cons-threshold 100000000))
 
 (use-package so-long
   :config
