@@ -362,10 +362,16 @@
   :hook
   (restclient-mode-hook . restclient-test-mode))
 
-(use-package ob-restclient
-  :ensure t)
+(use-package ob-restclient :defer :ensure t)
 
-(use-package ob-async :ensure t)
+(use-package ob-typescript :defer :ensure t)
+
+(use-package ob-ts-node
+  :quelpa
+  (ob-ts-node :repo "atimchenko92/ob-ts-node"
+              :fetcher github))
+
+(use-package ob-async :defer :ensure t)
 
 ;; Commenting
 (use-package smart-comment
@@ -555,13 +561,13 @@
 ;; Groovy
 (use-package groovy-mode :ensure t)
 
-;; ;; ABAP stuff
-(use-package abap
-  :if (eq system-type 'gnu/linux)
-  :quelpa
-  (abap :repo "qianmarv/sap-abap-mode"
-        :fetcher github
-        :version original))
+;; ;; ;; ABAP stuff
+;; (use-package abap
+;;   :if (eq system-type 'gnu/linux)
+;;   :quelpa
+;;   (abap :repo "qianmarv/sap-abap-mode"
+;;         :fetcher github
+;;         :version original))
 
 ;; (use-package abap-mode
 ;;   :if (eq system-type 'gnu/linux)
@@ -596,7 +602,10 @@
   :bind ("C-c r" . ipython-shell-send-region)
   :hook (python-mode-hook))
 
-;; ;; JS/TS/React stuff
+;; JS/TS/React stuff
+(use-package typescript-mode
+  :ensure t)
+
 (use-package rjsx-mode
   :ensure t
   :mode
@@ -822,6 +831,8 @@
      (shell . t)
      (java . t)
      (sql . t)
+     (ts-node . t)
+     (typescript . t)
      (restclient . t)))
 
   (setq org-latex-pdf-process
