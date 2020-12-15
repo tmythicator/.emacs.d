@@ -940,7 +940,6 @@
 ;; Treemacs
 (use-package treemacs
   :ensure t
-  :defer t
   :bind
   (:map global-map
         ("C-x C-n" . treemacs)
@@ -951,9 +950,9 @@
   :ensure t)
 
 (use-package treemacs-icons-dired
-  :after treemacs dired
   :ensure t
-  :config (treemacs-icons-dired-mode))
+  :config (treemacs-icons-dired-mode t)
+  :hook(dired-mode . treemacs-icons-dired-mode))
 
 (use-package treemacs-magit
   :after treemacs magit
@@ -972,7 +971,6 @@
 
 (use-package helpful
   :ensure t
-  :defer t
   :bind
   (("C-h f" . helpful-callable)
    ("C-h v" . helpful-variable)
