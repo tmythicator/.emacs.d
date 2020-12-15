@@ -40,7 +40,7 @@
 
 (use-package paradox
   :ensure t
-  :defer 1
+  :defer t
   :config
   (paradox-enable))
 
@@ -132,7 +132,9 @@
   (so-long-threshold 400))
 
 ;; Emacs Window Manager
-(use-package exwm :ensure t)
+(use-package exwm
+  :ensure t
+  :commands (exwm-init))
 
 (use-package expand-region
   :ensure t
@@ -143,14 +145,13 @@
   (pending-delete-mode t))
 
 (use-package autorevert
-  :diminish auto-revert-mode)
+  :defer 0.1)
 
 (use-package ibuffer
   :bind
   ([remap list-buffers] . ibuffer))
 
 (use-package imenu
-  :defer
   :config (setq imenu-auto-rescan t))
 
 (use-package files
@@ -172,9 +173,11 @@
   :custom
   (recentf-auto-cleanup 30)
   :config
+  (recentf-mode)
   (run-with-idle-timer 30 t 'recentf-save-list))
 
 (use-package cus-edit
+  :defer t
   :custom
   (custom-file
    (if (eq system-type 'windows-nt)
@@ -272,15 +275,13 @@
 
 (use-package ivy-rich
   :ensure t
-  :after (ivy)
   :config
   (ivy-rich-mode 1))
 
 (use-package flyspell-correct-ivy
   :ensure t
-  :bind ("C-M-;" . flyspell-correct-wrapper)
-  :init
-  (setq flyspell-correct-interface #'flyspell-correct-ivy))
+  :bind (:map flyspell-mode-map
+              ("C-c $" . flyspell-correct-at-point)))
 
 (use-package swiper
   :ensure t
@@ -300,10 +301,7 @@
 (use-package dashboard
   :ensure t
   :bind
-  (("<f5>" . open-dashboard-buffer)
-   :map dashboard-mode-map
-   ("l" . play-dashboard-theme)
-   ("s" . initiate-hvatit))
+  ("<f5>" . open-dashboard-buffer)
   :init
   (dashboard-setup-startup-hook)
 
@@ -312,17 +310,6 @@
     "Opens up the dashboard buffer, if exists"
     (interactive)
     (switch-to-buffer "*dashboard*"))
-
-  (defun initiate-hvatit ()
-    "Stops the dashboard theme"
-    (interactive)
-    (my/play-media (concat user-emacs-directory "dashboard/dashboard-enough.mp3") t)
-    (shell-command "pkill -f dashboard-theme.mp3"))
-
-  (defun play-dashboard-theme ()
-    "Plays the dashboard theme"
-    (interactive)
-    (my/play-media (concat user-emacs-directory "dashboard/dashboard-theme.mp3") t))
 
   :custom
   (dashboard-items '((recents  . 5)
@@ -343,6 +330,7 @@
   (tramp-default-proxies-alist nil))
 
 (use-package counsel-tramp
+  :after tramp
   :ensure t
   :custom
   (make-backup-files nil)
@@ -350,6 +338,7 @@
 
 ;; Rest client stuff
 (use-package request
+  :defer t
   :ensure t)
 
 (use-package restclient
@@ -362,16 +351,19 @@
   :hook
   (restclient-mode-hook . restclient-test-mode))
 
-(use-package ob-restclient :defer :ensure t)
-
-(use-package ob-typescript :defer :ensure t)
+(use-package ob-restclient
+  :ensure t
+  :after org restclient)
 
 (use-package ob-ts-node
+  :after org
   :quelpa
   (ob-ts-node :repo "atimchenko92/ob-ts-node"
               :fetcher github))
 
-(use-package ob-async :defer :ensure t)
+(use-package ob-async
+  :defer t
+  :ensure t)
 
 ;; Commenting
 (use-package smart-comment
@@ -432,14 +424,8 @@
   (eshell-toggle-use-projectile-root t)
   (eshell-toggle-run-command nil)
   (eshell-toggle-size-fraction 5)
-  ;; (eshell-toggle-init-function #'vterm) ;; To experimental for my taste
   :bind
   ("M-`" . eshell-toggle))
-
-
-;; Shell
-;; (use-package vterm
-;;   :ensure t)
 
 ;; Elisp stuff
 (use-package eros
@@ -517,25 +503,6 @@
   :ensure t
   :after lsp
   :config
-
-  (use-package dap-firefox
-    :config
-    (dap-firefox-setup)
-    (dap-register-debug-template "Custom Firefox Debug Config"
-                                 (list :type "firefox"
-                                       :cwd nil
-                                       :request "launch"
-                                       :file nil
-                                       :url "http://localhost:3000"
-                                       :webRoot "${workspaceRoot}/src"
-                                       :reAttach t
-                                       :program nil
-                                       :name "Custom Firefox::Run")))
-
-  (use-package dap-node
-    :config
-    (dap-node-setup))
-
   (dap-mode 1)
   (dap-ui-mode 1)
   ;; enables mouse hover support
@@ -549,17 +516,23 @@
 (use-package dap-java :after lsp-java)
 
 ;; Haskell stuff
-(use-package haskell-mode :ensure t)
+(use-package haskell-mode
+  :defer t
+  :ensure t)
 
 ;; Clojure stuff
 (use-package clojure-mode
   :ensure t
   :defer t)
 
-(use-package cider :ensure t)
+(use-package cider
+  :ensure t
+  :defer t)
 
 ;; Groovy
-(use-package groovy-mode :ensure t)
+(use-package groovy-mode
+  :ensure t
+  :defer t)
 
 ;; ;; ;; ABAP stuff
 ;; (use-package abap
@@ -591,7 +564,7 @@
 
 (use-package pyvenv
   :ensure t
-  :diminish
+  :commands (pyvenv-activate)
   :config
   (setq pyvenv-mode-line-indicator
         '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
@@ -604,7 +577,8 @@
 
 ;; JS/TS/React stuff
 (use-package typescript-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package rjsx-mode
   :ensure t
@@ -625,6 +599,7 @@
 
 (use-package js-comint
   :ensure t
+  :commands(js-comint-repl)
   :config
   (add-hook 'js2--mode-hook
             (lambda ()
@@ -632,9 +607,13 @@
               (local-set-key (kbd "C-c b") 'js-send-buffer)
               (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go))))
 
-(use-package eslintd-fix :ensure t)
+(use-package eslintd-fix
+  :ensure t
+  :defer t)
 
-(use-package jest :ensure t)
+(use-package jest
+  :ensure t
+  :defer t)
 
 (use-package flycheck-jest
   :ensure t
@@ -643,10 +622,14 @@
   (flycheck-jest-setup))
 
 ;; Autofix missing imports.
-(use-package import-js :ensure t)
+(use-package import-js
+  :ensure t
+  :defer t)
 
 ;; JSON
-(use-package json-mode :ensure t)
+(use-package json-mode
+  :ensure t
+  :defer t)
 
 ;; Company
 (use-package company
@@ -737,7 +720,9 @@
   ("M-<left>" . windmove-left)
   ("M-<right>" . windmove-right))
 
-(use-package wgrep :ensure t)
+(use-package wgrep
+  :ensure t
+  :defer t)
 
 (use-package avy
   :ensure t
@@ -832,7 +817,6 @@
      (java . t)
      (sql . t)
      (ts-node . t)
-     (typescript . t)
      (restclient . t)))
 
   (setq org-latex-pdf-process
@@ -984,7 +968,6 @@
 
 (use-package free-keys
   :ensure t
-  :defer t
   :commands free-keys)
 
 (use-package helpful
