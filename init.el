@@ -356,7 +356,7 @@
   :after org restclient)
 
 (use-package ob-ts-node
-  :after org
+  :after org typescript
   :quelpa
   (ob-ts-node :repo "atimchenko92/ob-ts-node"
               :fetcher github))
@@ -621,11 +621,6 @@
   :config
   (flycheck-jest-setup))
 
-;; Autofix missing imports.
-(use-package import-js
-  :ensure t
-  :defer t)
-
 ;; JSON
 (use-package json-mode
   :ensure t
@@ -763,6 +758,7 @@
   :config
   (projectile-global-mode)
   :custom
+  (projectile-indexing-method 'alien)
   (projectile-project-root-files-functions
    '(projectile-root-local
      projectile-root-top-down
