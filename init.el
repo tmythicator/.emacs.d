@@ -575,6 +575,19 @@
   :bind ("C-c r" . ipython-shell-send-region)
   :hook (python-mode-hook))
 
+;; Scheme
+(use-package geiser
+  :ensure t
+  :defer t
+  :custom
+  (geiser-default-implementation 'guile))
+
+(use-package slime
+  :ensure t
+  :defer t
+  :custom
+  (inferior-lisp-program "sbcl"))
+
 ;; JS/TS/React stuff
 (use-package typescript-mode
   :ensure t
@@ -812,6 +825,8 @@
      (shell . t)
      (java . t)
      (sql . t)
+     (lisp . t)
+     (scheme . t)
      (ts-node . t)
      (restclient . t)))
 
@@ -834,15 +849,6 @@
   (org-projectile-per-project)
   (setq org-projectile-per-project-filepath "todo.org"
         org-agenda-files (append org-agenda-files (org-projectile-todo-files))))
-
-(use-package org-bullets
-  :ensure t
-  :after org
-  :custom
-  (org-bullets-bullet-list '("•"))
-  (org-ellipsis "▼")
-  :hook
-  (org-mode . org-bullets-mode))
 
 ;; Needs msys2 for windows. Deactivate as workaround
 (use-package pdf-tools
@@ -1007,14 +1013,14 @@
 (set-frame-parameter nil 'alpha '(95 . 75))
 (fringe-mode 10)
 
-(use-package modus-operandi-theme
+(use-package modus-themes
   :ensure t
   :config
-  (load-theme 'modus-operandi t)
+  (load-theme 'modus-vivendi t)
   :custom
-  (modus-operandi-theme-org-blocks 'rainbow)
-  (modus-operandi-theme-slanted-constructs t)
-  (modus-operandi-theme-bold-constructs t))
+  (modus-themes-org-blocks 'rainbow)
+  (modus-themes-slanted-constructs t)
+  (modus-themes-bold-constructs t))
 
 ;; My custom functions
 (defun my/insert-change-id ()
