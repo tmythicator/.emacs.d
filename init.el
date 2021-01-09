@@ -358,7 +358,7 @@
 (use-package ob-ts-node
   :after org typescript
   :quelpa
-  (ob-ts-node :repo "atimchenko92/ob-ts-node"
+  (ob-ts-node :repo "tmythicator/ob-ts-node"
               :fetcher github))
 
 (use-package ob-async
@@ -558,9 +558,7 @@
 
 (use-package lsp-pyright
   :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))
+  :hook (python-mode . (lambda () (lsp))))
 
 (use-package pyvenv
   :ensure t
