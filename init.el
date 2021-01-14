@@ -133,6 +133,7 @@
 
 ;; Emacs Window Manager
 (use-package exwm
+  :requires xelb
   :quelpa
   (exwm :repo "ch11ng/exwm"
         :fetcher github)
@@ -449,7 +450,7 @@
               ("C-c l o" . lsp-organize-imports)
               ("C-c l r" . lsp-rename))
 
-  :hook(((java-mode js2-mode c-mode c++-mode typescript-mode) . lsp)
+  :hook(((java-mode js2-mode c-mode c++-mode web-mode typescript-mode) . lsp)
         (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
@@ -536,22 +537,6 @@
   :ensure t
   :defer t)
 
-;; ;; ;; ABAP stuff
-;; (use-package abap
-;;   :if (eq system-type 'gnu/linux)
-;;   :quelpa
-;;   (abap :repo "qianmarv/sap-abap-mode"
-;;         :fetcher github
-;;         :version original))
-
-;; (use-package abap-mode
-;;   :if (eq system-type 'gnu/linux)
-;;   :mode ("\\.abap\\'" . abap-mode)
-;;   :quelpa
-;;   (abap-mode :repo "qianmarv/ABAPInEmacs"
-;;              :fetcher github
-;;              :version original))
-
 ;; Python stuff
 (use-package python
   :custom
@@ -597,13 +582,13 @@
     (interactive)
     (major-mode-suspend)
     (web-mode)
-    (major-mode-restore)))
+    (major-mode-restore))
 
-(use-package rjsx-mode
-  :ensure t
-  :mode
-  (("\\.js$" . rjsx-mode)
-   ("\\.jsx$" . rjsx-mode)))
+  (add-hook 'find-file-hook
+            (lambda ()
+              (when (eq major-mode 'typescript-mode)
+                (ts/typescript-setup-hook)))))
+
 
 (use-package web-mode
   :ensure t
@@ -614,6 +599,13 @@
   (web-mode-code-indent-offset 4)
   (web-mode-style-padding 4)
   (web-mode-script-padding 4))
+
+(use-package rjsx-mode
+  :ensure t
+  :mode
+  (("\\.js$" . rjsx-mode)
+   ("\\.jsx$" . rjsx-mode)))
+
 
 (use-package js-comint
   :ensure t
@@ -1020,8 +1012,10 @@
 
 (use-package modus-themes
   :ensure t
+  :init
+  (modus-themes-load-themes)
   :config
-  (load-theme 'modus-vivendi t)
+  (modus-themes-load-vivendi)
   :custom
   (modus-themes-org-blocks 'rainbow)
   (modus-themes-slanted-constructs t)
