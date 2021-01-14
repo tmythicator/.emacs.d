@@ -133,7 +133,9 @@
 
 ;; Emacs Window Manager
 (use-package exwm
-  :ensure t
+  :quelpa
+  (exwm :repo "ch11ng/exwm"
+        :fetcher github)
   :commands (exwm-init))
 
 (use-package expand-region
@@ -447,7 +449,7 @@
               ("C-c l o" . lsp-organize-imports)
               ("C-c l r" . lsp-rename))
 
-  :hook(((java-mode typescript-mode web-mode js2-mode c-mode c++-mode) . lsp)
+  :hook(((java-mode js2-mode c-mode c++-mode typescript-mode) . lsp)
         (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
@@ -589,7 +591,13 @@
 ;; JS/TS/React stuff
 (use-package typescript-mode
   :ensure t
-  :defer t)
+  :mode ("\\.ts$" "\\.tsx$")
+  :config
+  (defun ts/typescript-setup-hook ()
+    (interactive)
+    (major-mode-suspend)
+    (web-mode)
+    (major-mode-restore)))
 
 (use-package rjsx-mode
   :ensure t
@@ -599,8 +607,7 @@
 
 (use-package web-mode
   :ensure t
-  :mode (("\\.ts$" . web-mode)
-         ("\\.tsx$" . web-mode))
+  :defer t
   :custom
   (web-mode-markup-indent-offset 4)
   (web-mode-css-indent-offset 4)
