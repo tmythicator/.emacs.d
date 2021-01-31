@@ -391,12 +391,6 @@
   :init
   (setq fish-completion-fallback-on-bash-p t))
 
-(use-package esh-help
-  :ensure t
-  :defer t
-  :config
-  (setup-esh-help-eldoc))
-
 (use-package em-term
   :config
   (setq eshell-visual-commands
@@ -794,26 +788,36 @@
 
 ;; Org-mode/PDF/Markdown stuff
 (use-package org
-  ;; to be sure we have latest Org version
   :ensure org-plus-contrib
+  :hook ((org-mode . org/visual-setup)
+         (org-mode . org/habits-setup)
+         (org-mode . org/refiling-setup))
   :bind
-  ("C-c l" . org-store-link)
   ("C-c a" . org-agenda)
   :config
-  (setq org-default-notes-file "~/Org/notes.org")
-  ;; Should normaly support russian
-  (setq org-latex-compiler "xelatex")
-  ;; Set default inline image width
-  (setq org-image-actual-width '(400))
-  ;; Stop org-mode from highjacking shift-cursor keys.
-  (setq org-replace-disputed-keys t)
-  (add-hook
-   'org-mode-hook
-   (lambda ()
-     (visual-line-mode 1)))
-  ;; Minted
-  (require 'ox-latex)
-  (setq org-latex-listings 'minted)
+
+  (defun org/visual-setup ()
+    "Sets up org-mode to be visually more appealing"
+    (visual-line-mode 1)
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (auto-fill-mode 0)
+    (visual-line-mode 1))
+
+  (defun org/refiling-setup ()
+    "Sets up refiling for org-mode"
+    (setq org-refile-targets '(("Archive.org" :maxlevel . 1)
+                               (org-agenda-files :maxlevel . 1)))
+
+    (setq org-outline-path-complete-in-steps nil)
+    (setq org-refile-use-outline-path t)
+    (advice-add 'org-refile :after 'org-save-all-org-buffers))
+
+  (defun org/habits-setup ()
+    "Sets up habits for org-mode"
+    (require 'org-habit)
+    (add-to-list 'org-modules 'org-habit)
+    (setq org-habit-graph-column 60))
 
   ;; Babel src evaluator
   (org-babel-do-load-languages
@@ -827,13 +831,9 @@
      (ts-node . t)
      (restclient . t)))
 
-  (setq org-latex-pdf-process
-        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "bibtex $(basename %b)"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
   :custom
-  (org-src-tab-acts-natively t)
+  (org-agenda-files '("~/Org/Tasks.org"
+                      "~/Org/Habits.org"))
   (org-todo-keyword-faces
    '(("SAMPLE" . "red")
      ("NONE" . "white"))))
