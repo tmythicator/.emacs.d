@@ -791,11 +791,12 @@
   :ensure org-plus-contrib
   :hook ((org-mode . org/visual-setup)
          (org-mode . org/habits-setup)
-         (org-mode . org/refiling-setup))
+         (org-mode . org/refiling-setup)
+         (org-mode . org/captures-setup))
   :bind
-  ("C-c a" . org-agenda)
+  (("C-c a" . org-agenda)
+   ("C-c j" . org-capture))
   :config
-
   (defun org/visual-setup ()
     "Sets up org-mode to be visually more appealing"
     (visual-line-mode 1)
@@ -819,6 +820,26 @@
     (add-to-list 'org-modules 'org-habit)
     (setq org-habit-graph-column 60))
 
+  (defun org/captures-setup ()
+    "Sets up captures for org-mode"
+    (setq org-capture-templates
+          `(("t" "Tasks / Projects")
+            ("tt" "Task" entry (file+olp "~/Org/Tasks.org" "Inbox")
+             "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+
+            ("j" "Journal Entries")
+            ("jj" "Journal" entry
+             (file+olp+datetree "~/Org/Journal.org")
+             "\n* %<%I:%M %p> - Journal :journal:\n%"
+             :clock-in :clock-resume
+             :empty-lines 1)
+
+            ("jd" "Dream Journal" entry
+             (file+olp+datetree "~/Org/Journal.org")
+             "* %^{PROMPT} :dream:\n%?"
+             :empty-lines 1
+             :kill-buffer t))))
+
   ;; Babel src evaluator
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -834,18 +855,13 @@
   :custom
   (org-agenda-files '("~/Org/Tasks.org"
                       "~/Org/Habits.org"))
+  (org-todo-keywords
+   '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+     (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
+
   (org-todo-keyword-faces
    '(("SAMPLE" . "red")
      ("NONE" . "white"))))
-
-(use-package org-projectile
-  :ensure t
-  :bind (("C-c n p" . org-projectile-project-todo-completing-read)
-         ("C-c c" . org-capture))
-  :config
-  (org-projectile-per-project)
-  (setq org-projectile-per-project-filepath "todo.org"
-        org-agenda-files (append org-agenda-files (org-projectile-todo-files))))
 
 ;; Needs msys2 for windows. Deactivate as workaround
 (use-package pdf-tools
