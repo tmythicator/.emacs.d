@@ -315,6 +315,7 @@
     (switch-to-buffer "*dashboard*"))
 
   :custom
+  (dashboard-startup-banner 'logo)
   (dashboard-items '((recents  . 5)
                      (bookmarks . 7)
                      (projects . 5)
@@ -795,7 +796,7 @@
          (org-mode . org/captures-setup))
   :bind
   (("C-c a" . org-agenda)
-   ("C-c j" . org-capture))
+   ("C-c c" . org-capture))
   :config
   (defun org/visual-setup ()
     "Sets up org-mode to be visually more appealing"
@@ -830,13 +831,13 @@
             ("j" "Journal Entries")
             ("jj" "Journal" entry
              (file+olp+datetree "~/Org/Journal.org")
-             "\n* %<%I:%M %p> - Journal :journal:\n%"
-             :clock-in :clock-resume
-             :empty-lines 1)
+             "* %<%I:%M %p> - Journal :journal:\n%?"
+             :empty-lines 1
+             :kill-buffer t)
 
             ("jd" "Dream Journal" entry
-             (file+olp+datetree "~/Org/Journal.org")
-             "* %^{PROMPT} :dream:\n%?"
+             (file+olp+datetree "~/Org/DreamJournal.org")
+             "* %^{Dream title} %t :dream:\n%?"
              :empty-lines 1
              :kill-buffer t))))
 
