@@ -148,7 +148,8 @@
   (pending-delete-mode t))
 
 (use-package autorevert
-  :defer 0.1)
+  :custom
+  (global-auto-revert-mode t))
 
 (use-package ibuffer
   :bind
@@ -700,6 +701,69 @@
   :bind ("C-c DEL" . shrink-whitespace))
 
 ;; Navigation and thing
+(use-package hydra
+  :ensure t
+  :bind ("<f6>" . hydra-window/body)
+  :config
+
+  (use-package windmove)
+  (defun hydra-move-splitter-left (arg)
+    "Move window splitter left."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+          (windmove-find-other-window 'right))
+        (shrink-window-horizontally arg)
+      (enlarge-window-horizontally arg)))
+
+  (defun hydra-move-splitter-right (arg)
+    "Move window splitter right."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+          (windmove-find-other-window 'right))
+        (enlarge-window-horizontally arg)
+      (shrink-window-horizontally arg)))
+
+  (defun hydra-move-splitter-up (arg)
+    "Move window splitter up."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+          (windmove-find-other-window 'up))
+        (enlarge-window arg)
+      (shrink-window arg)))
+
+  (defun hydra-move-splitter-down (arg)
+    "Move window splitter down."
+    (interactive "p")
+    (if (let ((windmove-wrap-around))
+          (windmove-find-other-window 'up))
+        (shrink-window arg)
+      (enlarge-window arg)))
+
+  (defhydra hydra-window (:color pink :hint nil :timeout 20)
+    "
+         Move                    Resize                 Scale               Split
+╭───────────────────────────────────────────────────────────────────────────────────────────────────┐
+         ^_<up>_^                    ^_C-<up>_^                 [_i_]ncrease          [_v_]ertical
+          ^^▲^^                         ^^▲^^                   [_d_]ecrease          [_h_]orizontal
+ _<left>_ ◀   ▶ _<right>_    _C-<left>_ ◀   ▶ _C-<right>_       n[_0_]rmal
+          ^^▼^^                         ^^▼^^                                         ╭──────────┐
+        ^_<down>_^                  ^_C-<down>_^                                    quit : [_SPC_]
+"
+    ("<left>" windmove-left)
+    ("<down>" windmove-down)
+    ("<up>" windmove-up)
+    ("<right>" windmove-right)
+    ("C-<up>" hydra-move-splitter-up)
+    ("C-<down>" hydra-move-splitter-down)
+    ("C-<left>" hydra-move-splitter-left)
+    ("C-<right>" hydra-move-splitter-right)
+    ("h" split-window-below)
+    ("v" split-window-right)
+    ("i" text-scale-increase)
+    ("d" text-scale-decrease)
+    ("0" text-scale-set)
+    ("SPC" nil)))
+
 (use-package dumb-jump
   :ensure t
   :bind (("M-g o" . dumb-jump-go-other-window)
@@ -712,13 +776,6 @@
 (use-package winner
   :config
   (winner-mode 1))
-
-(use-package windmove
-  :bind
-  ("M-<up>" . windmove-up)
-  ("M-<down>" . windmove-down)
-  ("M-<left>" . windmove-left)
-  ("M-<right>" . windmove-right))
 
 (use-package wgrep
   :ensure t
