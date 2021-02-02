@@ -703,7 +703,8 @@
 ;; Navigation and thing
 (use-package hydra
   :ensure t
-  :bind ("<f6>" . hydra-window/body)
+  :bind (("<f6>" . hydra-window/body)
+         ("<f7>" . hydra-git-gutter/body))
   :config
 
   (use-package windmove)
@@ -762,7 +763,18 @@
     ("i" text-scale-increase)
     ("d" text-scale-decrease)
     ("0" text-scale-set)
-    ("SPC" nil)))
+    ("SPC" nil))
+
+  (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
+                                        :hint nil)
+    ("n" git-gutter:next-hunk "next hunk")
+    ("p" git-gutter:previous-hunk "previous hunk")
+    ("h" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)) "first hunk")
+    ("l" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)) "last hunk")
+    ("<SPC>" git-gutter:popup-hunk "popup h")
+    ("s" git-gutter:stage-hunk "stage hunk")
+    ("r" git-gutter:revert-hunk "revert hunk")
+    ("q" nil "quit")))
 
 (use-package dumb-jump
   :ensure t
