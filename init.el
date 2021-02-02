@@ -707,39 +707,7 @@
          ("<f7>" . hydra-git-gutter/body))
   :config
 
-  (use-package windmove)
-  (defun hydra-move-splitter-left (arg)
-    "Move window splitter left."
-    (interactive "p")
-    (if (let ((windmove-wrap-around))
-          (windmove-find-other-window 'right))
-        (shrink-window-horizontally arg)
-      (enlarge-window-horizontally arg)))
-
-  (defun hydra-move-splitter-right (arg)
-    "Move window splitter right."
-    (interactive "p")
-    (if (let ((windmove-wrap-around))
-          (windmove-find-other-window 'right))
-        (enlarge-window-horizontally arg)
-      (shrink-window-horizontally arg)))
-
-  (defun hydra-move-splitter-up (arg)
-    "Move window splitter up."
-    (interactive "p")
-    (if (let ((windmove-wrap-around))
-          (windmove-find-other-window 'up))
-        (enlarge-window arg)
-      (shrink-window arg)))
-
-  (defun hydra-move-splitter-down (arg)
-    "Move window splitter down."
-    (interactive "p")
-    (if (let ((windmove-wrap-around))
-          (windmove-find-other-window 'up))
-        (shrink-window arg)
-      (enlarge-window arg)))
-
+  (use-package hydra-examples)
   (defhydra hydra-window (:color pink :hint nil :timeout 20)
     "
          Move                    Resize                 Scale               Split
@@ -748,7 +716,7 @@
           ^^▲^^                         ^^▲^^                   [_d_]ecrease          [_h_]orizontal
  _<left>_ ◀   ▶ _<right>_    _C-<left>_ ◀   ▶ _C-<right>_       n[_0_]rmal
           ^^▼^^                         ^^▼^^                                         ╭──────────┐
-        ^_<down>_^                  ^_C-<down>_^                                    quit : [_SPC_]
+        ^_<down>_^                  ^_C-<down>_^                                    quit : [_q_]
 "
     ("<left>" windmove-left)
     ("<down>" windmove-down)
@@ -763,7 +731,7 @@
     ("i" text-scale-increase)
     ("d" text-scale-decrease)
     ("0" text-scale-set)
-    ("SPC" nil))
+    ("q" nil))
 
   (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
                                         :hint nil)
