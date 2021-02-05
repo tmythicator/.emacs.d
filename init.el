@@ -703,46 +703,48 @@
 ;; Navigation and thing
 (use-package hydra
   :ensure t
-  :bind (("<f6>" . hydra-window/body)
-         ("<f7>" . hydra-git-gutter/body))
+  :bind (("C-c w" . hydra-window/body)
+         ("C-c g" . hydra-git-gutter/body)
+         ("C-c c" . hydra-clock/body))
   :config
 
   (use-package hydra-examples)
   (defhydra hydra-window (:color pink :hint nil :timeout 20)
-    "
-         Move                    Resize                 Scale               Split
-╭───────────────────────────────────────────────────────────────────────────────────────────────────┐
-         ^_<up>_^                    ^_C-<up>_^                 [_i_]ncrease          [_v_]ertical
-          ^^▲^^                         ^^▲^^                   [_d_]ecrease          [_h_]orizontal
- _<left>_ ◀   ▶ _<right>_    _C-<left>_ ◀   ▶ _C-<right>_       n[_0_]rmal
-          ^^▼^^                         ^^▼^^                                         ╭──────────┐
-        ^_<down>_^                  ^_C-<down>_^                                    quit : [_q_]
-"
-    ("<left>" windmove-left)
-    ("<down>" windmove-down)
-    ("<up>" windmove-up)
-    ("<right>" windmove-right)
-    ("C-<up>" hydra-move-splitter-up)
-    ("C-<down>" hydra-move-splitter-down)
-    ("C-<left>" hydra-move-splitter-left)
-    ("C-<right>" hydra-move-splitter-right)
-    ("h" split-window-below)
-    ("v" split-window-right)
-    ("i" text-scale-increase)
-    ("d" text-scale-decrease)
-    ("0" text-scale-set)
-    ("q" nil))
+    ("<up>" windmove-up "up" :column "Move")
+    ("<down>" windmove-down "down")
+    ("<left>" windmove-left "left")
+    ("<right>" windmove-right "right")
+    ("C-<up>" hydra-move-splitter-up "up" :column "Resize")
+    ("C-<down>" hydra-move-splitter-down "down")
+    ("C-<left>" hydra-move-splitter-left "left")
+    ("C-<right>" hydra-move-splitter-right "right")
+    ("+" text-scale-increase "increase" :column "Scale")
+    ("-" text-scale-decrease "decrease")
+    ("0" text-scale-set "normal")
+    ("h" split-window-below "horizontal" :column "Split")
+    ("v" split-window-right "vertical")
+    ("q" nil "quit"))
 
   (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1)
                                         :hint nil)
-    ("n" git-gutter:next-hunk "next hunk")
+    ("n" git-gutter:next-hunk "next hunk" :column "Navigation")
     ("p" git-gutter:previous-hunk "previous hunk")
     ("h" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)) "first hunk")
     ("l" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)) "last hunk")
-    ("<SPC>" git-gutter:popup-hunk "popup h")
-    ("s" git-gutter:stage-hunk "stage hunk")
+    ("s" git-gutter:stage-hunk "stage hunk" :column "Staging")
     ("r" git-gutter:revert-hunk "revert hunk")
-    ("q" nil "quit")))
+    ("<SPC>" git-gutter:popup-hunk "popup h" :column "Display")
+    ("q" nil "quit"))
+
+  (defhydra hydra-clock (:color blue)
+    ("q" nil "quit" :column "Clock")
+    ("c" org-clock-cancel "cancel" :color pink :column "Do")
+    ("d" org-clock-display "display")
+    ("e" org-clock-modify-effort-estimate "effort")
+    ("i" org-clock-in "in")
+    ("j" org-clock-goto "jump")
+    ("o" org-clock-out "out")
+    ("r" org-clock-report "report")))
 
 (use-package dumb-jump
   :ensure t
@@ -833,7 +835,7 @@
          (org-mode . org/captures-setup))
   :bind
   (("C-c a" . org-agenda)
-   ("C-c c" . org-capture))
+   ("C-c j" . org-capture))
   :config
   (defun org/visual-setup ()
     "Sets up org-mode to be visually more appealing"
@@ -845,8 +847,7 @@
 
   (defun org/refiling-setup ()
     "Sets up refiling for org-mode"
-    (setq org-refile-targets '(("Archive.org" :maxlevel . 1)
-                               (org-agenda-files :maxlevel . 1)))
+    (setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
 
     (setq org-outline-path-complete-in-steps nil)
     (setq org-refile-use-outline-path t)
@@ -892,7 +893,8 @@
 
   :custom
   (org-agenda-files '("~/Org/Tasks.org"
-                      "~/Org/Habits.org"))
+                      "~/Org/Habits.org"
+                      "~/Org/Journal.org"))
   (org-todo-keywords
    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
      (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
