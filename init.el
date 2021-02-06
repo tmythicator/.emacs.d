@@ -132,6 +132,9 @@
   (so-long-threshold 400))
 
 ;; Emacs Window Manager
+(use-package xelb
+  :ensure t)
+
 (use-package exwm
   :requires xelb
   :quelpa
