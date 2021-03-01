@@ -55,7 +55,7 @@
   ;; Javascript
   (setq-default js2-basic-offset 2)
   ;; JSON
-  (setq-default js-indent-level 2)
+  (setq-default js-indent-level 4)
   ;; Coffeescript
   (setq-default coffee-tab-width 2)
   ;; Typescript
@@ -466,23 +466,20 @@
               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
               ([remap xref-find-references] . lsp-ui-peek-find-references))
   :custom
+  (lsp-lens-enable t)
+
   (lsp-ui-doc-enable nil)
-  (lsp-ui-doc-use-webkit t)  ;; Use lsp-ui-doc-webkit only in GUI
+  (lsp-ui-doc-use-webkit t)
   (lsp-ui-doc-header t)
   (lsp-ui-doc-include-signature t)
   (lsp-ui-doc-position 'top)
-  ;; (lsp-ui-doc-border (face-foreground 'default))
+
   (lsp-ui-sideline-enable nil)
   (lsp-ui-sideline-show-hover nil)
   (lsp-ui-sideline-ignore-duplicate t)
-  ;;  (lsp-ui-sideline-show-code-actions nil)
 
-  :config
-  ;; (flycheck-add-next-checker 'lsp-ui 'typescript-tslint)
-  ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
-  ;; https://github.com/emacs-lsp/lsp-ui/issues/243
-  (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
-    (setq mode-line-format nil)))
+  (lsp-signature-auto-activate nil)
+  (lsp-signature-render-documentation nil))
 
 (use-package lsp-ivy
   :ensure t
@@ -497,23 +494,22 @@
   :ensure t
   :after lsp-mode
   :bind (:map java-mode-map
-              ("C-c j a" . lsp-java-add-import)
-              ("C-c j o" . lsp-java-organize-imports)))
+              ("C-c l j a" . lsp-java-add-import)
+              ("C-c l j o" . lsp-java-organize-imports)))
 
 ;; Debugger for LSP
 (use-package dap-mode
   :ensure t
   :after lsp
   :config
+  (dap-auto-configure-mode)
   (dap-mode 1)
   (dap-ui-mode 1)
   ;; enables mouse hover support
   (dap-tooltip-mode 1)
   (tooltip-mode 1)
-  :bind (:map dap-mode-map
-              ("<f6>" . dap-step-in)
-              ("<f7>" . dap-next)
-              ("<f8>" . dap-continue)))
+  (add-hook 'dap-stopped-hook
+            (lambda (arg) (call-interactively #'dap-hydra))))
 
 (use-package dap-java :after lsp-java)
 
