@@ -430,16 +430,15 @@
   ("M-`" . eshell-toggle))
 
 (use-package compile
+  :hook (compilation-filter . compile/visual-setup)
   :config
-  (require 'ansi-color)
-  (defun compile/colorize-compilation ()
-    "Colorize from `compilation-filter-start' to `point'."
+  (defun compile/visual-setup ()
+    "Colorize from `compilation-filter-start' to `point' and toggle `visual-line-mode'"
     (let ((inhibit-read-only t))
+      (use-package ansi-color)
+      (visual-line-mode 1)
       (ansi-color-apply-on-region
-       compilation-filter-start (point))))
-
-  (add-hook 'compilation-filter-hook
-            #'compile/colorize-compilation))
+       compilation-filter-start (point)))))
 
 
 ;; Elisp stuff
