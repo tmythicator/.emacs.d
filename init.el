@@ -816,12 +816,16 @@
   (defun my-compilation-buffer-name (mode)
     "Prefix MODE with current project name if any.
     Intented to use as `compilation-buffer-name-function'."
-    (let ((mode* (downcase mode))
-          (project (projectile-project-name)))
-
-      (concat "*" project ":" mode* "*")))
+    (concat "*" (projectile-project-name) ":" (downcase mode) "*"))
 
   (setq compilation-buffer-name-function #'my-compilation-buffer-name)
+
+  (projectile-register-project-type 'npm '("package.json")
+                                    :project-file "package.json"
+				                            :compile "npm ci"
+				                            :test "npm test"
+				                            :run "npm start"
+				                            :test-suffix ".spec")
 
   :custom
   (projectile-indexing-method 'alien)
