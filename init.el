@@ -818,13 +818,9 @@
     "Prefix MODE with current project name if any.
     Intented to use as `compilation-buffer-name-function'."
     (let ((mode* (downcase mode))
-          (project (project-current)))
-      (if project
-          (let ((project-name (file-name-nondirectory
-                               (directory-file-name
-                                (project-root project)))))
-            (concat "*" project-name "-" mode* "*"))
-        (concat "*" mode* "*"))))
+          (project (projectile-project-name)))
+
+      (concat "*" project ":" mode* "*")))
 
   (setq compilation-buffer-name-function #'my-compilation-buffer-name)
 
