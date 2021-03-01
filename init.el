@@ -429,6 +429,19 @@
   :bind
   ("M-`" . eshell-toggle))
 
+(use-package compile
+  :config
+  (require 'ansi-color)
+  (defun compile/colorize-compilation ()
+    "Colorize from `compilation-filter-start' to `point'."
+    (let ((inhibit-read-only t))
+      (ansi-color-apply-on-region
+       compilation-filter-start (point))))
+
+  (add-hook 'compilation-filter-hook
+            #'compile/colorize-compilation))
+
+
 ;; Elisp stuff
 (use-package eros
   :ensure t
@@ -800,6 +813,21 @@
   :commands projectile-global-mode
   :config
   (projectile-global-mode)
+
+  (defun my-compilation-buffer-name (mode)
+    "Prefix MODE with current project name if any.
+    Intented to use as `compilation-buffer-name-function'."
+    (let ((mode* (downcase mode))
+          (project (project-current)))
+      (if project
+          (let ((project-name (file-name-nondirectory
+                               (directory-file-name
+                                (project-root project)))))
+            (concat "*" project-name "-" mode* "*"))
+        (concat "*" mode* "*"))))
+
+  (setq compilation-buffer-name-function #'my-compilation-buffer-name)
+
   :custom
   (projectile-indexing-method 'alien)
   (projectile-project-root-files-functions
