@@ -813,19 +813,9 @@
   :config
   (projectile-global-mode)
 
-  (defun my-compilation-buffer-name (mode)
-    "Prefix MODE with current project name if any.
-    Intented to use as `compilation-buffer-name-function'."
-    (concat "*" (projectile-project-name) ":" (downcase mode) "*"))
-
-  (setq compilation-buffer-name-function #'my-compilation-buffer-name)
-
-  (projectile-register-project-type 'npm '("package.json")
-                                    :project-file "package.json"
-				                            :compile "npm ci"
-				                            :test "npm test"
-				                            :run "npm start"
-				                            :test-suffix ".spec")
+  (setq compilation-buffer-name-function
+        (lambda (mode)
+          (concat "*" (projectile-project-name) ":" (downcase mode) "*")))
 
   :custom
   (projectile-indexing-method 'alien)
@@ -844,13 +834,15 @@
 
 ;; Use ibuffer instead of list-buffers (C-x C-b) and sort by project.
 (use-package ibuffer-projectile
+  :ensure t
+  :hook (ibuffer . ibuffer/setup)
   :bind ("C-x C-b" . ibuffer)
   :config
-  (add-hook 'ibuffer-hook
-            (lambda ()
-              (ibuffer-projectile-set-filter-groups)
-              (unless (eq ibuffer-sorting-mode 'alphabetic)
-                (ibuffer-do-sort-by-alphabetic)))))
+  (defun ibuffer/setup ()
+    "Sets up buffer list, by sorting buffers alphabeticaly"
+    (ibuffer-projectile-set-filter-groups)
+    (unless (eq ibuffer-sorting-mode 'alphabetic)
+      (ibuffer-do-sort-by-alphabetic))))
 
 ;; Org-mode/PDF/Markdown stuff
 (use-package org
