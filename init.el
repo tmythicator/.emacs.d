@@ -574,9 +574,8 @@
   :custom
   (geiser-default-implementation 'guile))
 
-(use-package slime
+(use-package sly
   :ensure t
-  :defer t
   :custom
   (inferior-lisp-program "sbcl"))
 
