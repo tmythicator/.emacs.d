@@ -625,7 +625,8 @@
 
 (use-package eslintd-fix
   :ensure t
-  :defer t)
+  :hook ((js2-mode . eslintd-fix-mode)
+         (typescript-mode . eslintd-fix-mode)))
 
 (use-package jest
   :ensure t
