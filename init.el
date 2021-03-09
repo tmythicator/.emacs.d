@@ -451,9 +451,6 @@
 (use-package lsp-mode
   :ensure t
   :commands lsp
-  :custom
-  (lsp-auto-guess-root nil)
-  (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
   :bind (:map lsp-mode-map
               ("C-c l a" . lsp-execute-code-action)
               ("C-c l f" . lsp-format-buffer)
@@ -467,7 +464,6 @@
 (use-package lsp-ui
   :ensure t
   :after lsp-mode
-  :diminish
   :commands lsp-ui-mode
   :bind (:map lsp-ui-mode-map
               ("C-c l c" . lsp-ui-sideline-apply-code-actions)
@@ -490,6 +486,7 @@
   (lsp-ui-sideline-show-hover nil)
   (lsp-ui-sideline-ignore-duplicate t)
 
+  (lsp-diagnostics-provider :flycheck)
   (lsp-signature-auto-activate nil)
   (lsp-signature-render-documentation nil))
 
@@ -509,10 +506,19 @@
               ("C-c l j a" . lsp-java-add-import)
               ("C-c l j o" . lsp-java-organize-imports)))
 
+(use-package lsp-javascript
+  :after lsp-mode
+  :config
+  (defun lsp-js/eslint-setup ()
+    (interactive)
+    (require 'lsp-javascript)
+    (flycheck-add-next-checker 'lsp 'javascript-eslint))
+  (lsp-js/eslint-setup))
+
 ;; Debugger for LSP
 (use-package dap-mode
   :ensure t
-  :after lsp
+  :after lsp-mode
   :config
   (dap-auto-configure-mode)
   (dap-mode 1)
@@ -583,18 +589,14 @@
 (use-package typescript-mode
   :ensure t
   :mode ("\\.ts$" "\\.tsx$")
+  :hook (find-file . ts/typescript-setup)
   :config
-  (defun ts/typescript-setup-hook ()
+  (defun ts/typescript-setup ()
     (interactive)
-    (major-mode-suspend)
-    (web-mode)
-    (major-mode-restore))
-
-  (add-hook 'find-file-hook
-            (lambda ()
-              (when (eq major-mode 'typescript-mode)
-                (ts/typescript-setup-hook)))))
-
+    (when (eq major-mode 'typescript-mode)
+      (major-mode-suspend)
+      (web-mode)
+      (major-mode-restore))))
 
 (use-package web-mode
   :ensure t
@@ -693,10 +695,10 @@
 (use-package flycheck
   :ensure t
   :config
-  (add-hook 'find-file-hook
-            (lambda ()
-              (unless (memq major-mode '(emacs-lisp-mode solidity-mode))
-                (flycheck-mode)))))
+  (setq-default flycheck-disabled-checkers '(c/c++-clang emacs-lisp emacs-lisp-checkdoc))
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+  (flycheck-add-mode 'javascript-eslint 'typescript-mode)
+  (global-flycheck-mode t))
 
 (use-package flycheck-color-mode-line
   :ensure t
