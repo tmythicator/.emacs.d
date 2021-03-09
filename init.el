@@ -511,8 +511,9 @@
   :config
   (defun lsp-js/eslint-setup ()
     (interactive)
-    (require 'lsp-javascript)
-    (flycheck-add-next-checker 'lsp 'javascript-eslint))
+    (require 'flycheck)
+    (when (flycheck-may-enable-checker 'javascript-eslint)
+      (flycheck-select-checker 'javascript-eslint)))
   (lsp-js/eslint-setup))
 
 ;; Debugger for LSP
