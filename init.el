@@ -508,13 +508,13 @@
 
 (use-package lsp-javascript
   :after lsp-mode
+  :hook (lsp-javascript . my/flycheck-eslint-or-lsp)
   :config
-  (defun lsp-js/eslint-setup ()
-    (interactive)
-    (require 'flycheck)
-    (when (flycheck-may-enable-checker 'javascript-eslint)
-      (flycheck-select-checker 'javascript-eslint)))
-  (lsp-js/eslint-setup))
+  (defun my/flycheck-eslint-or-lsp (arg)
+    (interactive "P")
+    (let* ((checker (or (and arg 'lsp) 'javascript-eslint)))
+      (require 'flycheck)
+      (flycheck-select-checker checker))))
 
 ;; Debugger for LSP
 (use-package dap-mode
