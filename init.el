@@ -1,11 +1,12 @@
 (require 'package)
 (setq package-archives
       `(("gnu" . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")
-        ("org" . "https://orgmode.org/elpa/")))
+        ("melpa" . "https://melpa.org/packages/")))
 
-(when (< emacs-major-version 27)
-  (package-initialize))
+(when (eq system-type 'darwin)
+  (setq mac-right-option-modifier nil
+        mac-right-command-modifier nil
+        mac-command-modifier 'meta))
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -15,7 +16,7 @@
   (require 'use-package))
 
 (put 'use-package 'lisp-indent-function 1)
-(defalias 'yes-or-no-p 'y-or-n-p)
+(setq my/prj-path "~/Work/my-project")
 
 (use-package use-package-core
   :custom
@@ -41,6 +42,8 @@
 (use-package paradox
   :ensure t
   :defer t
+  :custom
+  (paradox-github-token t)
   :config
   (paradox-enable))
 
@@ -49,13 +52,12 @@
   (put 'narrow-to-region 'disabled nil)
   (put 'downcase-region 'disabled nil)
   :config
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (delete-selection-mode t)
   ;; Set default indentation for various languages (add your own!)
   (setq-default tab-width 2)
   ;; Javascript
-  (setq-default js2-basic-offset 2)
-  ;; JSON
-  (setq-default js-indent-level 4)
+  (setq-default js2-basic-offset 4)
   ;; Coffeescript
   (setq-default coffee-tab-width 2)
   ;; Typescript
@@ -66,7 +68,7 @@
   (setq-default nxml-child-indent 2)
   ;; C/Java (lsp)
   (setq-default c-basic-offset 4)
-
+  (setq native-comp-async-report-warnings-errors 'silent)
   ;; Custom functions
   (defun indent-buffer ()
     "Autoindent the whole buffer"
@@ -99,6 +101,60 @@
       (yank)
       (move-to-column col)))
 
+  ;; My custom functions
+  (defun my/tslint-fix-current-buffer ()
+    "TSlints the current file/buffer"
+    (interactive)
+    (start-process-shell-command "tslint-autofix"
+                                 "*tslint-autofix*"
+                                 (concat "tslint --fix " (buffer-file-name))))
+
+  (defun my/eslint-autofix-current-buffer ()
+    "ESlints the current file/buffer"
+    (interactive)
+    (let* ((com-goto-repo-path (concat "cd " my/prj-path))
+           (node-modules-path "./config/coding/eslint/node_modules/")
+           (eslint-binary ".bin/eslint_d") ;; eslint_d is faster than eslint
+           (com-npm-eslint-fix (concat node-modules-path eslint-binary " --resolve-plugins-relative-to " node-modules-path " --fix "))
+           (com-full (concat com-goto-repo-path " && " com-npm-eslint-fix (buffer-file-name))))
+      (start-process-shell-command "eslint-autofix" "*eslint-autofix*" com-full)))
+
+  (defun my/eslint-autofix-staged ()
+    "ESlints currently staged files (ts|tsx|js|jsx|xsjslib)"
+    (interactive)
+    (let* ((com-goto-repo-path (concat "cd " my/prj-path))
+           (com-git-changed-files "$(git diff --name-only --cached | grep -E '\.(ts|tsx|js|jsx|xsjslib)$')")
+           (node-modules-path "./config/coding/eslint/node_modules/")
+           (eslint-binary ".bin/eslint_d") ;; eslint_d is faster than eslint
+           (com-npm-eslint-fix (concat node-modules-path eslint-binary " --resolve-plugins-relative-to " node-modules-path " --fix "))
+           (com-full (concat com-goto-repo-path " && " com-npm-eslint-fix com-git-changed-files)))
+      (start-process-shell-command "eslint-autofix" "*eslint-autofix*" com-full)))
+
+  (defun my/eslint-autofix-latest-commit ()
+    "ESlints the files (ts|tsx|js|jsx|xsjslib) from latest commit"
+    (interactive)
+    (let* ((com-goto-repo-path (concat "cd " my/prj-path))
+           (com-git-changed-files "$(git log -1 --name-only | grep -E '\.(ts|tsx|js|jsx|xsjslib)$')")
+           (node-modules-path "./config/coding/eslint/node_modules/")
+           (eslint-binary ".bin/eslint_d") ;; eslint_d is faster than eslint
+           (com-npm-eslint-fix (concat node-modules-path eslint-binary " --resolve-plugins-relative-to " node-modules-path " --fix "))
+           (com-full (concat com-goto-repo-path " && " com-npm-eslint-fix com-git-changed-files)))
+      (start-process-shell-command "eslint-autofix" "*eslint-autofix*" com-full)))
+
+  (defun my/prettier-pretify-current-buffer ()
+    "TSlints the current file/buffer"
+    (interactive)
+    (start-process-shell-command "prettier-format"
+                                 "*prettier*"
+                                 (concat "prettier --write " (buffer-file-name))))
+
+  (defun my/prettier-find-config-path ()
+    "TSlints the current file/buffer"
+    (interactive)
+    (start-process-shell-command "prettier-find-path"
+                                 "*prettier*"
+                                 (concat "prettier --find-config-path " (buffer-file-name))))
+
   :bind (:map global-map
               ("C-c <tab>" . indent-buffer)
               ("M-i" . imenu)
@@ -106,9 +162,9 @@
               ("M-n" . move-line-down)
               ("M-'" . duplicate-line))
   :custom
+  (column-number-mode t)
   ;; Long text scanning improvements
   (bidi-inhibit-bpa t)
-
   (default-input-method "german")
   (scroll-step 1)
   (inhibit-startup-screen t "Don't show splash screen")
@@ -120,27 +176,13 @@
   ;; Indentation and things
   (sentence-end-double-space nil)
   (mode-require-final-newline nil)
-  (require-final-newline nil)
-  ;; For LSP
-  (read-process-output-max (* 1024 1024))
-  (gc-cons-threshold 100000000))
+  (require-final-newline nil))
 
 (use-package so-long
   :config
   (global-so-long-mode t)
   :custom
   (so-long-threshold 400))
-
-;; Emacs Window Manager
-(use-package xelb
-  :ensure t)
-
-(use-package exwm
-  :requires xelb
-  :quelpa
-  (exwm :repo "ch11ng/exwm"
-        :fetcher github)
-  :commands (exwm-init))
 
 (use-package expand-region
   :ensure t
@@ -165,6 +207,10 @@
   :hook
   (before-save . delete-trailing-whitespace)
   :custom
+  ;; auto-save
+  (auto-save-default nil)
+  ;; lockfiles
+  (create-lockfiles nil)
   ;; backup settings
   (backup-by-copying t)
   (backup-directory-alist
@@ -172,8 +218,7 @@
                (concat user-emacs-directory "backups")))))
   (delete-old-versions t)
   (kept-new-versions 6)
-  (kept-old-versions 2)
-  (version-control t))
+  (kept-old-versions 2))
 
 (use-package recentf
   :defer 0.1
@@ -202,7 +247,6 @@
 	      centaur-tabs-height 32
 	      centaur-tabs-set-icons t
 	      centaur-tabs-set-modified-marker t
-	      centaur-tabs-show-navigation-buttons t
 	      centaur-tabs-set-bar 'under
 	      x-underline-at-descent-line t)
   (centaur-tabs-mode t)
@@ -261,10 +305,6 @@
   ("M-y" . counsel-yank-pop))
 
 (use-package amx :ensure t :defer t)
-
-(use-package counsel-world-clock
-  :ensure t
-  :after counsel)
 
 (use-package ivy
   :ensure t
@@ -325,25 +365,6 @@
                      (projects . 5)
                      (agenda . 5))))
 
-;; Tramp things
-(use-package tramp
-  :defer t
-  :config
-  (put 'temporary-file-directory 'standard-value `(,temporary-file-directory))
-  :custom
-  (tramp-backup-directory-alist backup-directory-alist)
-  (tramp-default-method (if (eq system-type 'windows-nt)
-                            "plink"
-                          "ssh"))
-  (tramp-default-proxies-alist nil))
-
-(use-package counsel-tramp
-  :after tramp
-  :ensure t
-  :custom
-  (make-backup-files nil)
-  (create-lockfiles nil))
-
 ;; Rest client stuff
 (use-package request
   :defer t
@@ -380,8 +401,12 @@
 
 ;; Eshell stuff
 (use-package exec-path-from-shell
-  :if (eq system-type 'gnu/linux)
+  :if (memq system-type '(gnu/linux darwin))
   :ensure t
+  :custom
+  (exec-path-from-shell-variables
+   '("PATH" "HANA_XS_HOST" "HANA_XS_PORT" "SHELL"))
+  (exec-path-from-shell-arguments '("-l"))
   :config
   (exec-path-from-shell-initialize))
 
@@ -400,7 +425,7 @@
   :config
   (setq eshell-visual-commands
         `(,@eshell-visual-commands
-          "pip" "pipenv" "npm" "mvn"))
+          "pip" "pipenv"))
   :custom
   (eshell-destroy-buffer-when-process-dies t))
 
@@ -457,6 +482,10 @@
               ("C-c l l" . lsp-find-references)
               ("C-c l o" . lsp-organize-imports)
               ("C-c l r" . lsp-rename))
+  :custom
+  ;; (lsp-file-watch-threshold 50000)
+  (gc-cons-threshold 600000000)
+  (read-process-output-max (* 4096 1024))
 
   :hook(((java-mode js2-mode c-mode c++-mode web-mode typescript-mode) . lsp)
         (lsp-mode . lsp-enable-which-key-integration)))
@@ -486,7 +515,6 @@
   (lsp-ui-sideline-show-hover nil)
   (lsp-ui-sideline-ignore-duplicate t)
 
-  (lsp-diagnostics-provider :flycheck)
   (lsp-signature-auto-activate nil)
   (lsp-signature-render-documentation nil))
 
@@ -498,98 +526,35 @@
   :ensure t
   :commands lsp-treemacs-errors-list)
 
-;; JAVA
-(use-package lsp-java
-  :ensure t
-  :after lsp-mode
-  :bind (:map java-mode-map
-              ("C-c l j a" . lsp-java-add-import)
-              ("C-c l j o" . lsp-java-organize-imports)))
-
 (use-package lsp-javascript
   :after lsp-mode
   :hook (lsp-javascript . my/flycheck-eslint-or-lsp)
+  :bind (:map lsp-mode-map
+              ("C-c l p" . my/prettier-pretify-current-buffer))
+  :custom
+  (lsp-clients-typescript-log-verbosity "off")
   :config
+  (defun my/flycheck-tslint-or-lsp (arg)
+    (interactive "P")
+    (let* ((checker (or (and arg 'lsp) 'typescript-tslint)))
+      (require 'flycheck)
+      (flycheck-select-checker checker)))
+
   (defun my/flycheck-eslint-or-lsp (arg)
     (interactive "P")
     (let* ((checker (or (and arg 'lsp) 'javascript-eslint)))
       (require 'flycheck)
       (flycheck-select-checker checker))))
 
-;; Debugger for LSP
-(use-package dap-mode
-  :ensure t
-  :after lsp-mode
-  :config
-  (dap-auto-configure-mode)
-  (dap-mode 1)
-  (dap-ui-mode 1)
-  ;; enables mouse hover support
-  (dap-tooltip-mode 1)
-  (tooltip-mode 1)
-  (add-hook 'dap-stopped-hook
-            (lambda (arg) (call-interactively #'dap-hydra))))
-
-(use-package dap-java :after lsp-java)
-
-;; Haskell stuff
-(use-package haskell-mode
-  :defer t
-  :ensure t)
-
-;; Clojure stuff
-(use-package clojure-mode
-  :ensure t
-  :defer t)
-
-(use-package cider
-  :ensure t
-  :defer t)
-
 ;; Groovy
 (use-package groovy-mode
   :ensure t
   :defer t)
 
-;; Python stuff
-(use-package python
-  :custom
-  (python-shell-interpreter "ipython")
-  (python-shell-interpreter-args "--simple-prompt --pprint"))
-
-(use-package lsp-pyright
-  :ensure t
-  :hook (python-mode . (lambda () (lsp))))
-
-(use-package pyvenv
-  :ensure t
-  :commands (pyvenv-activate)
-  :config
-  (setq pyvenv-mode-line-indicator
-        '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
-  (pyvenv-mode +1))
-
-(use-package ipython-shell-send
-  :ensure t
-  :bind ("C-c r" . ipython-shell-send-region)
-  :hook (python-mode-hook))
-
-;; Scheme
-(use-package geiser
-  :ensure t
-  :defer t
-  :custom
-  (geiser-default-implementation 'guile))
-
-(use-package sly
-  :ensure t
-  :custom
-  (inferior-lisp-program "sbcl"))
-
 ;; JS/TS/React stuff
 (use-package typescript-mode
   :ensure t
-  :mode ("\\.ts$" "\\.tsx$")
+  :mode ("\\.ts$") ;; "\\.tsx$")
   :hook (find-file . ts/typescript-setup)
   :config
   (defun ts/typescript-setup ()
@@ -601,6 +566,7 @@
 
 (use-package web-mode
   :ensure t
+  :mode ("\\.tsx$")
   :defer t
   :custom
   (web-mode-markup-indent-offset 4)
@@ -615,32 +581,6 @@
   (("\\.js$" . rjsx-mode)
    ("\\.jsx$" . rjsx-mode)))
 
-
-(use-package js-comint
-  :ensure t
-  :commands(js-comint-repl)
-  :config
-  (add-hook 'js2--mode-hook
-            (lambda ()
-              (local-set-key (kbd "C-x C-e") 'js-send-last-sexp)
-              (local-set-key (kbd "C-c b") 'js-send-buffer)
-              (local-set-key (kbd "C-c C-b") 'js-send-buffer-and-go))))
-
-(use-package eslintd-fix
-  :ensure t
-  :hook ((js2-mode . eslintd-fix-mode)
-         (typescript-mode . eslintd-fix-mode)))
-
-(use-package jest
-  :ensure t
-  :defer t)
-
-(use-package flycheck-jest
-  :ensure t
-  :after jest
-  :config
-  (flycheck-jest-setup))
-
 ;; JSON
 (use-package json-mode
   :ensure t
@@ -651,9 +591,10 @@
   :ensure t
   :diminish company-mode
   :bind
-  (:map company-active-map
-        ("C-n" . company-select-next-or-abort)
-        ("C-p" . company-select-previous-or-abort))
+  (("C-." . company-complete)
+   (:map company-active-map
+         ("C-n" . company-select-next-or-abort)
+         ("C-p" . company-select-previous-or-abort)))
   :config
   (use-package company-quickhelp
     :ensure t
@@ -671,7 +612,7 @@
   ;; Except when you're in term-mode/python-mode.
   ;; (company-global-modes '(not term-mode))
   ;; Give Company a decent default configuration.
-  (company-idle-delay 0)
+  (company-idle-delay 0.0)
   (company-minimum-prefix-length 1)
   (company-selection-wrap-around t)
   (company-show-numbers t)
@@ -682,21 +623,13 @@
   :hook
   (after-init . global-company-mode))
 
-(use-package emojify
-  :ensure t
-  :hook (after-init . global-emojify-mode))
-
-(use-package company-emoji
-  :ensure t
-  :after company
-  :config
-  (company-emoji-init))
-
 ;; Flycheck
 (use-package flycheck
   :ensure t
   :config
-  (setq-default flycheck-disabled-checkers '(c/c++-clang emacs-lisp emacs-lisp-checkdoc))
+  (setq-default flycheck-disabled-checkers '(c/c++-clang emacs-lisp emacs-lisp-checkdoc typescript-tslint))
+  (setq flycheck-javascript-eslint-executable (concat my/prj-path "/config/coding/eslint/node_modules/.bin/eslint_d"))
+  (setq flycheck-eslint-args (concat "--resolve-plugins-relative-to " my/prj-path "/config/coding/eslint/node_modules"))
   (flycheck-add-mode 'javascript-eslint 'web-mode)
   (flycheck-add-mode 'javascript-eslint 'typescript-mode)
   (global-flycheck-mode t))
@@ -723,6 +656,27 @@
   :config
 
   (use-package hydra-examples)
+  (defhydra hydra-smerge
+    (:color red :hint nil
+            :pre (smerge-mode 1))
+    ("RET" smerge-keep-current "current" :column "Keep")
+    ("u" smerge-keep-upper "upper")
+    ("l" smerge-keep-lower "lower")
+    ("a" smerge-keep-all "all")
+    ("b" smerge-keep-base "base")
+    ("m" smerge-keep-mine "mine")
+    ("o" smerge-keep-other "other")
+    ("n" smerge-next "to next" :column "Nav")
+    ("p" smerge-prev "to prev")
+    ("<" smerge-diff-base-mine "base-mine" :column "Diff")
+    ("=" smerge-diff-mine-other "mine-other")
+    (">" smerge-diff-base-other "base-other")
+    ("C" smerge-combine-with-next "combine" :column "Others")
+    ("R" smerge-refine "refine")
+    ("r" smerge-resolve "resolve")
+    ("E" smerge-ediff "ediff")
+    ("q" nil "quit" :color blue))
+
   (defhydra hydra-window (:color pink :hint nil :timeout 20)
     ("<up>" windmove-up "up" :column "Move")
     ("<down>" windmove-down "down")
@@ -783,7 +737,6 @@
   (avy-setup-default)
   :bind
   (("C-," .   avy-goto-char-timer)
-   ("C-." .   avy-goto-word-1)
    :map goto-map
    ("M-c" . avy-goto-char)
    ("M-g" . avy-goto-line)))
@@ -816,18 +769,31 @@
   :config
   (projectile-global-mode)
 
-  (setq compilation-buffer-name-function
-        (lambda (mode)
-          (concat "*" (projectile-project-name) ":" (downcase mode) "*")))
-
+  (projectile-register-project-type 'npm/mvn-custom '("pom.xml")
+				                            :compile "cd webpack && rm -rf build-cache && cd npm-setup && mvn clean install"
+				                            :test "cd webpack && npm run start-unit --specSubdir=table,tableWrapper,pa"
+				                            :run "cd webpack/ && npm start"
+				                            :test-suffix "Spec.ts")
   :custom
-  (projectile-indexing-method 'alien)
-  (projectile-project-root-files-functions
-   '(projectile-root-local
-     projectile-root-top-down
-     projectile-root-bottom-up
-     projectile-root-top-down-recurring))
+  (projectile-track-known-projects-automatically nil)
+  (projectile-auto-discover nil)
+  (projectile-enable-caching t)
+  ;; (compilation-buffer-name-function
+  ;;  (lambda (mode)
+  ;;    (concat "*" (projectile-project-name) ":" (downcase mode) "*")))
+
+  ;; (projectile-project-root-files-functions
+  ;;  '( projectile-root-local
+  ;;     projectile-root-top-down
+  ;;     projectile-root-bottom-up
+  ;;     projectile-root-top-down-recurring
+  ;;     ))
   (projectile-completion-system 'ivy))
+
+(use-package rg
+  :ensure t
+  :config
+  (rg-enable-default-bindings))
 
 (use-package counsel-projectile
   :ensure t
@@ -835,23 +801,10 @@
   :config
   (counsel-projectile-mode))
 
-;; Use ibuffer instead of list-buffers (C-x C-b) and sort by project.
-(use-package ibuffer-projectile
-  :ensure t
-  :hook (ibuffer . ibuffer/setup)
-  :bind ("C-x C-b" . ibuffer)
-  :config
-  (defun ibuffer/setup ()
-    "Sets up buffer list, by sorting buffers alphabeticaly"
-    (ibuffer-projectile-set-filter-groups)
-    (unless (eq ibuffer-sorting-mode 'alphabetic)
-      (ibuffer-do-sort-by-alphabetic))))
-
 ;; Org-mode/PDF/Markdown stuff
 (use-package org
-  :ensure org-plus-contrib
+  :ensure t
   :hook ((org-mode . org/visual-setup)
-         (org-mode . org/habits-setup)
          (org-mode . org/refiling-setup)
          (org-mode . org/captures-setup))
   :bind
@@ -874,12 +827,6 @@
     (setq org-refile-use-outline-path t)
     (advice-add 'org-refile :after 'org-save-all-org-buffers))
 
-  (defun org/habits-setup ()
-    "Sets up habits for org-mode"
-    (require 'org-habit)
-    (add-to-list 'org-modules 'org-habit)
-    (setq org-habit-graph-column 60))
-
   (defun org/captures-setup ()
     "Sets up captures for org-mode"
     (setq org-capture-templates
@@ -892,12 +839,6 @@
              (file+olp+datetree "~/Org/Journal.org")
              "* %<%I:%M %p> - Journal :journal:\n%?"
              :empty-lines 1
-             :kill-buffer t)
-
-            ("jd" "Dream Journal" entry
-             (file+olp+datetree "~/Org/DreamJournal.org")
-             "* %^{Dream title} %t :dream:\n%?"
-             :empty-lines 1
              :kill-buffer t))))
 
   ;; Babel src evaluator
@@ -908,35 +849,14 @@
      (java . t)
      (sql . t)
      (lisp . t)
-     (scheme . t)
      (ts-node . t)
      (restclient . t)))
 
   :custom
-  (org-agenda-files '("~/Org/Tasks.org"
-                      "~/Org/Habits.org"
-                      "~/Org/Journal.org"))
+  (org-agenda-files '("~/Org/Tasks.org"))
   (org-todo-keywords
    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
-     (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
-
-  (org-todo-keyword-faces
-   '(("SAMPLE" . "red")
-     ("NONE" . "white"))))
-
-;; Needs msys2 for windows. Deactivate as workaround
-(use-package pdf-tools
-  :if (eq system-type 'gnu/linux)
-  :ensure t
-  :mode
-  ("\\.pdf\\'" . pdf-view-mode)
-  :config
-  (pdf-tools-install))
-
-(use-package nov
-  :ensure t
-  :mode
-  ("\\.epub$" . nov-mode))
+     (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)"))))
 
 (use-package markdown-mode
   :ensure t
@@ -965,18 +885,7 @@
   :ensure t
   :defer t)
 
-;; Docker/Kubernetes things
-(use-package docker
-  :ensure t
-  :bind
-  (:map mode-specific-map
-        ("d" . docker)))
-
-(use-package dockerfile-mode
-  :ensure t
-  :mode "Dockerfile\\'")
-
-;;Dired things
+;; Dired things
 (use-package dired
   :ensure nil
   :bind
@@ -1082,55 +991,11 @@
   :ensure t
   :hook (after-init . mood-line-mode))
 
+(use-package vscode-dark-plus-theme
+  :ensure t
+  :config
+  (load-theme 'vscode-dark-plus t))
+
 ;; Transparency
 (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
 (set-frame-parameter nil 'alpha '(95 . 75))
-(fringe-mode 10)
-
-(use-package modus-themes
-  :ensure t
-  :init
-  (modus-themes-load-themes)
-  :config
-  (modus-themes-load-vivendi)
-  :custom
-  (modus-themes-org-blocks 'rainbow)
-  (modus-themes-slanted-constructs t)
-  (modus-themes-bold-constructs t))
-
-;; My custom functions
-(defun my/insert-change-id ()
-  "Generate change Id on the third line of the current buffer (gerrit)."
-  (interactive)
-  (let* ((charset "0123456789abcdef")
-         (base-count (length charset))
-         (number-of-hex-chars 40)
-         (res '()))
-
-    (dotimes (_ number-of-hex-chars)
-      (setq res (cons (elt charset (random base-count)) res)))
-    (goto-line 3)
-    (move-beginning-of-line nil)
-    (insert (concat "Change-Id: I" res "\n"))
-    (goto-line 1)
-    (move-beginning-of-line nil)))
-
-(defun my/tslint-fix-current-buffer ()
-  "TSlints the current file/buffer"
-  (interactive)
-  (start-process-shell-command "tslint-autofix"
-                               "*tslint-autofix*"
-                               (concat "tslint --fix " (buffer-file-name))))
-
-(defun my/play-media (file-path &optional
-                                minimized
-                                pr-name)
-  "Plays the media asynchronously"
-  (interactive "f\nfile-name")
-  (unless pr-name (setq pr-name "Emacs-VLC"))
-  (let* ((player-name "vlc")
-         (player-flags (and minimized "--qt-start-minimized --qt-notification 0 --play-and-exit"))
-         (shell-command (concat player-name " " file-path " " player-flags)))
-    (start-process-shell-command pr-name
-                                 "*VLC-Log*"
-                                 shell-command)))
