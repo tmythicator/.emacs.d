@@ -472,3 +472,6 @@
   :hook
   ((emacs-lisp-mode)
    . (lambda () (flymake-mode -1))))
+
+(use-package nix-mode
+  :mode "\\.nix\\'")
