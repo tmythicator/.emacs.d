@@ -39,6 +39,7 @@
   (put 'narrow-to-region 'disabled nil)
   (put 'downcase-region 'disabled nil)
   (delete-selection-mode 1)
+  (electric-pair-mode 1)
   (dolist (mapping '(("\\.ts\\'"       . typescript-ts-mode)
                      ("\\.tsx\\'"      . tsx-ts-mode)
                      ("\\.js\\'"       . js-ts-mode)
@@ -86,6 +87,14 @@
 
 ;; Editing niceties
 (use-package autorevert :ensure nil :init (global-auto-revert-mode 1) :custom (auto-revert-verbose nil))
+
+(use-package gcmh
+  :init
+  (gcmh-mode 1)
+  :custom
+  (gcmh-idle-delay 0.5)
+  (gcmh-high-cons-threshold (* 16 1024 1024)))
+
 (use-package no-littering
   :config
   (use-package recentf
@@ -179,6 +188,14 @@
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-keyword))
 
+(use-package kind-icon
+  :after corfu
+  :custom
+  (kind-icon-default-head '(:height 0.8 :scale 0.8))
+  (kind-icon-use-icons t)
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
 ;; ── Project / Git / Grep ────────────────────────────────────────────────
 (use-package projectile
   :init (projectile-mode 1)
@@ -242,7 +259,6 @@
   (eshell-toggle-size-fraction 5)
   :bind ("M-`" . eshell-toggle))
 
-;; ── Compile pretty ──────────────────────────────────────────────────────
 (use-package ansi-color :defer t)
 (use-package compile
   :ensure nil
@@ -254,7 +270,6 @@
       (when (require 'ansi-color nil t)
         (ansi-color-apply-on-region compilation-filter-start (point))))))
 
-;; ── Org / Markdown / Babel ──────────────────────────────────────────────
 (use-package org
   :hook ((org-mode . org/visual-setup)
          (org-mode . org/refiling-setup)
@@ -350,16 +365,14 @@
   (dashboard-items '((recents . 5) (bookmarks . 3)
                      (projects . 5) (agenda . 10))))
 
-;; ── Comment & Editing ───────────────────────────────────────────────────
-(use-package smartparens
-  :init (require 'smartparens-config)
-  :config (smartparens-global-mode 1))
-(use-package smart-comment :bind ("M-;" . smart-comment))
 (use-package shrink-whitespace
   :commands shrink-whitespace
   :bind ("C-c DEL" . shrink-whitespace))
 
-;; ── Hydra / Jumps ───────────────────────────────────────────────────────
+(use-package apheleia
+  :config
+  (apheleia-global-mode +1))
+
 (use-package hydra
   :bind (("C-c C-m" . hydra-smerge/body)
          ("C-c C-g" . hydra-git-gutter/body))
@@ -388,12 +401,6 @@
     ("<SPC>" git-gutter:popup-hunk "popup" :column "Show")
     ("q" nil "quit")))
 
-(use-package dumb-jump
-  :bind (("M-g o" . dumb-jump-go-other-window)
-         ("M-g j" . dumb-jump-go)
-         ("M-g i" . dumb-jump-go-prompt)
-         ("M-g x" . dumb-jump-go-prefer-external)
-         ("M-g z" . dumb-jump-go-prefer-external-other-window)))
 (use-package winner :ensure nil :config (winner-mode 1))
 (use-package wgrep :defer t)
 (use-package avy
@@ -405,34 +412,8 @@
   :bind (("C-x o"   . ace-window) ("C-x C-o" . ace-swap-window))
   :custom (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-;; ── Languages / Modes ───────────────────────────────────────────────────
-(use-package yaml-mode :mode "\\.yml\\'")
-(use-package dockerfile-mode)
-(use-package hl-todo :hook ((prog-mode . hl-todo-mode) (yaml-mode . hl-todo-mode)))
-(use-package go-mode)
+(use-package hl-todo :hook ((prog-mode . hl-todo-mode) (yaml-ts-mode . hl-todo-mode)))
 (use-package eros :hook (emacs-lisp-mode . eros-mode))
-;; (use-package json-mode :defer t)
-
-;; Clojure & CIDER
-(use-package clojure-mode
-  :mode "\\.clj\\'"
-  :hook ((clojure-mode . subword-mode)
-         (clojure-mode . rainbow-delimiters-mode))
-  :custom (clojure-indent-style 'always-indent))
-
-(use-package cider
-  :after clojure-mode
-  :commands (cider-jack-in cider-connect)
-  :hook ((cider-repl-mode . rainbow-delimiters-mode))
-  :custom
-  (cider-repl-display-help-banner nil)
-  (cider-repl-pop-to-buffer-on-connect t)
-  (cider-repl-use-pretty-printing t)
-  (cider-repl-wrap-history t)
-  (cider-repl-history-file "~/.emacs.d/cider-history")
-  (cider-repl-result-prefix ";; => ")
-  (cider-repl-history-size 3000)
-  (cider-auto-select-error-buffer t))
 
 ;; EGLOT
 (use-package eldoc
@@ -449,6 +430,7 @@
    (js-ts-mode . eglot-ensure)
    (go-ts-mode . eglot-ensure))
   :bind (:map eglot-mode-map
+              ("C-c l f" . eglot-format-buffer)
               ("C-c l r" . eglot-rename)
               ("C-c l a" . eglot-code-actions)
               ("C-c l o" . eglot-code-action-organize-imports))
@@ -459,14 +441,12 @@
   ;;           (lambda () (when (eglot-managed-p) (eglot-format-buffer))))
   )
 
-
 ;; Flymake
 (use-package flymake
   :ensure nil
   :hook (prog-mode . flymake-mode)
   :hook
-  ((emacs-lisp-mode)
-   . (lambda () (flymake-mode -1))))
+  ((emacs-lisp-mode) . (lambda () (flymake-mode -1))))
 
 (use-package nix-mode
   :mode "\\.nix\\'")
