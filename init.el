@@ -29,6 +29,9 @@
 (use-package quelpa :defer t :custom (quelpa-update-melpa-p nil))
 (use-package quelpa-use-package)
 
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
+
 ;; ── Basic UX ─────────────────────────────────────────────────────────────
 (use-package emacs
   :ensure nil
@@ -36,6 +39,17 @@
   (put 'narrow-to-region 'disabled nil)
   (put 'downcase-region 'disabled nil)
   (delete-selection-mode 1)
+  (dolist (mapping '(("\\.ts\\'"       . typescript-ts-mode)
+                     ("\\.tsx\\'"      . tsx-ts-mode)
+                     ("\\.js\\'"       . js-ts-mode)
+                     ("\\.mjs\\'"      . js-ts-mode)
+                     ("\\.json\\'"     . json-ts-mode)
+                     ("\\.yaml\\'"     . yaml-ts-mode)
+                     ("Dockerfile\\'"  . dockerfile-ts-mode)
+                     ("\\.go\\'"       . go-ts-mode)
+                     ("/go\\.mod\\'"   . go-mod-ts-mode)
+                     ("\\.nix\\'"      . nix-mode)))
+    (add-to-list 'auto-mode-alist mapping))
   :hook (prog-mode . display-line-numbers-mode)
   :bind (:map global-map
               ("C-c <tab>" . indent-buffer)
@@ -57,16 +71,6 @@
   (require-final-newline nil)
   (native-comp-async-report-warnings-errors 'silent)
   :config
-  ;; Tree-sitter modes
-  (setq treesit-language-source-alist
-        '((typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-          (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))))
-
-  (add-to-list 'auto-mode-alist '("\\.ts\\'"  . typescript-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.js\\'"  . js-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js-ts-mode))
-
   ;; Utils
   (defun indent-buffer () (interactive) (indent-region (point-min) (point-max)))
   (defun move-line-up ()   (interactive) (transpose-lines 1) (forward-line -2) (indent-according-to-mode))
@@ -160,7 +164,6 @@
          ("C-h B" . embark-bindings))
   :init (setq prefix-help-command #'embark-prefix-help-command))
 (use-package embark-consult :after (embark consult))
-(use-package consult-lsp :after (consult lsp-mode))
 
 ;; ── Popup completion via CAPF: corfu (+ cape)
 (use-package corfu
@@ -173,7 +176,8 @@
 (use-package cape
   :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-file))
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-keyword))
 
 ;; ── Project / Git / Grep ────────────────────────────────────────────────
 (use-package projectile
@@ -407,7 +411,7 @@
 (use-package hl-todo :hook ((prog-mode . hl-todo-mode) (yaml-mode . hl-todo-mode)))
 (use-package go-mode)
 (use-package eros :hook (emacs-lisp-mode . eros-mode))
-(use-package json-mode :defer t)
+;; (use-package json-mode :defer t)
 
 ;; Clojure & CIDER
 (use-package clojure-mode
@@ -430,40 +434,31 @@
   (cider-repl-history-size 3000)
   (cider-auto-select-error-buffer t))
 
-;; ── LSP Stack ───────────────────────────────────────────────────────────
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook ((js-ts-mode typescript-ts-mode tsx-ts-mode c-mode c++-mode java-mode) . lsp-deferred)
-  :bind (:map lsp-mode-map
-              ("C-c l a" . lsp-execute-code-action)
-              ("C-c l f" . lsp-format-buffer)
-              ("C-c l r" . lsp-rename)
-              ("C-c l o" . lsp-organize-imports)
-              ("C-c l l" . lsp-find-references))
+;; EGLOT
+(use-package eldoc
+  :ensure nil
   :custom
-  (lsp-keymap-prefix "C-c l")
-  (lsp-enable-on-type-formatting nil)
-  (lsp-completion-provider :none)
-  (lsp-eslint-enable t))
+  (eldoc-echo-area-use-multiline-p nil)
+  (eldoc-echo-area-display-truncation-message nil))
 
-(use-package lsp-ui
-  :after lsp-mode
-  :commands lsp-ui-mode
-  :bind (:map lsp-ui-mode-map
-              ("C-c l d" . lsp-ui-doc-mode)
-              ("C-c l c" . lsp-ui-sideline-apply-code-actions)
-              ("C-c l s" . lsp-ui-find-workspace-symbol)
-              ("C-c l i" . lsp-ui-imenu)
-              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-              ([remap xref-find-references]  . lsp-ui-peek-find-references))
-  :custom
-  (lsp-lens-enable t)
-  (lsp-ui-doc-enable nil)
-  (lsp-ui-sideline-enable nil)
-  (lsp-signature-auto-activate nil))
+(use-package eglot
+  :ensure nil
+  :hook
+  ((typescript-ts-mode . eglot-ensure)
+   (tsx-ts-mode . eglot-ensure)
+   (js-ts-mode . eglot-ensure)
+   (go-ts-mode . eglot-ensure))
+  :bind (:map eglot-mode-map
+              ("C-c l r" . eglot-rename)
+              ("C-c l a" . eglot-code-actions)
+              ("C-c l o" . eglot-code-action-organize-imports))
+  :config
+  (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider)
+  ;; Formatting
+  ;; (add-hook 'before-save-hook
+  ;;           (lambda () (when (eglot-managed-p) (eglot-format-buffer))))
+  )
 
-(use-package lsp-treemacs :after (lsp-mode treemacs) :commands lsp-treemacs-errors-list :config (lsp-treemacs-sync-mode 1))
-(use-package consult-lsp :after (consult lsp-mode))
 
 ;; Flymake
 (use-package flymake
