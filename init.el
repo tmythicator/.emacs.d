@@ -40,6 +40,11 @@
   (put 'downcase-region 'disabled nil)
   (delete-selection-mode 1)
   (electric-pair-mode 1)
+  ;; No title-bar
+  (add-to-list 'default-frame-alist '(undecorated . t))
+  ;; Frame alpha
+  (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
+  (set-frame-parameter nil 'alpha '(95 . 75))
   (dolist (mapping '(("\\.ts\\'"       . typescript-ts-mode)
                      ("\\.tsx\\'"      . tsx-ts-mode)
                      ("\\.js\\'"       . js-ts-mode)
@@ -77,11 +82,7 @@
   (defun move-line-up ()   (interactive) (transpose-lines 1) (forward-line -2) (indent-according-to-mode))
   (defun move-line-down () (interactive) (forward-line 1) (transpose-lines 1) (forward-line -1) (indent-according-to-mode))
   (defun duplicate-line () (interactive)
-         (let ((col (current-column))) (move-beginning-of-line 1) (kill-line) (yank) (newline) (yank) (move-to-column col)))
-
-  ;; Frame alpha
-  (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
-  (set-frame-parameter nil 'alpha '(95 . 75)))
+         (let ((col (current-column))) (move-beginning-of-line 1) (kill-line) (yank) (newline) (yank) (move-to-column col))))
 
 (use-package so-long :ensure nil :config (global-so-long-mode 1) :custom (so-long-threshold 4000))
 
@@ -241,23 +242,45 @@
   :if (memq system-type '(gnu/linux darwin))
   :init (exec-path-from-shell-initialize)
   :custom
-  (exec-path-from-shell-variables '("PATH" "SHELL"))
+  (exec-path-from-shell-variables '("PATH" "SHELL" "MANPATH"))
   (exec-path-from-shell-arguments '("-l")))
 
-(use-package em-term :ensure nil
-             :custom (eshell-destroy-buffer-when-process-dies t)
-             :config (setq eshell-visual-commands `(,@eshell-visual-commands "pip" "pipenv")))
-(use-package esh-autosuggest :hook (eshell-mode . esh-autosuggest-mode))
-(use-package eshell-fringe-status :hook (eshell-mode . eshell-fringe-status-mode))
+(use-package eshell-syntax-highlighting
+  :hook (eshell-mode . eshell-syntax-highlighting-mode))
+
+(use-package esh-autosuggest
+  :hook (eshell-mode . esh-autosuggest-mode))
+
+(use-package eshell-fringe-status
+  :hook (eshell-mode . eshell-fringe-status-mode))
+
 (use-package eshell-prompt-extras
   :after esh-opt
-  :custom (eshell-highlight-prompt nil)
-  :config (setq eshell-prompt-function #'epe-theme-dakrone))
+  :custom
+  (eshell-highlight-prompt nil)
+  :config
+  (setq eshell-prompt-function #'epe-theme-dakrone))
+
+(use-package eshell
+  :ensure nil
+  :hook (eshell-mode . (lambda ()
+                         (eshell/alias "update" "sudo nixos-rebuild switch --flake ~/Development/nixos-config#nixos-rog")
+                         (eshell/alias "upgrade" "nix flake update --flake ~/Development/nixos-config && update")
+                         (eshell/alias "gc" "nix-collect-garbage -d")))
+  :custom
+  (eshell-destroy-buffer-when-process-dies t)
+  (eshell-scroll-to-bottom-on-input t)
+  (eshell-hist-ignoredups t)
+  :config
+  (setq eshell-visual-commands
+        '("htop" "top" "less" "more" "ssh" "tmux" "docker-compose" "node" "ipython" "pip" "pipenv")))
+
 (use-package eshell-toggle
-  :custom (eshell-toggle-use-projectile-root t)
+  :bind ("M-`" . eshell-toggle)
+  :custom
+  (eshell-toggle-use-projectile-root t)
   (eshell-toggle-run-command nil)
-  (eshell-toggle-size-fraction 5)
-  :bind ("M-`" . eshell-toggle))
+  (eshell-toggle-size-fraction 3))
 
 (use-package ansi-color :defer t)
 (use-package compile
