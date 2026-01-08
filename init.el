@@ -40,11 +40,7 @@
   (put 'downcase-region 'disabled nil)
   (delete-selection-mode 1)
   (electric-pair-mode 1)
-  ;; No title-bar
-  (add-to-list 'default-frame-alist '(undecorated . t))
-  ;; Frame alpha
-  (add-to-list 'default-frame-alist '(alpha . (95 . 75)))
-  (set-frame-parameter nil 'alpha '(95 . 75))
+
   (dolist (mapping '(("\\.ts\\'"       . typescript-ts-mode)
                      ("\\.tsx\\'"      . tsx-ts-mode)
                      ("\\.js\\'"       . js-ts-mode)
@@ -68,7 +64,6 @@
   (bidi-inhibit-bpa t)
   (default-input-method "german")
   (scroll-step 1)
-  (inhibit-startup-screen t)
   (use-dialog-box nil)
   (enable-recursive-minibuffers t)
   (indent-tabs-mode nil)
@@ -128,9 +123,7 @@
 ;; Icons
 (use-package all-the-icons :if (display-graphic-p))
 
-(use-package tool-bar :ensure nil :config (tool-bar-mode -1))
-(use-package scroll-bar :ensure nil :config (scroll-bar-mode -1))
-(use-package menu-bar :ensure nil :config (menu-bar-mode -1) :bind ([S-f10] . menu-bar-mode))
+(use-package menu-bar :ensure nil :bind ([S-f10] . menu-bar-mode))
 (use-package tooltip :ensure nil :custom (tooltip-mode -1))
 (use-package paren :ensure nil :config (show-paren-mode 1))
 (use-package hl-line  :ensure nil :hook (prog-mode . hl-line-mode))
