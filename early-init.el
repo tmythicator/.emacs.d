@@ -10,8 +10,6 @@
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(undecorated . t) default-frame-alist)
 (push '(alpha . (95 . 75)) default-frame-alist)
-(push '(undecorated . t) default-frame-alist)
-(push '(alpha . (95 . 75)) default-frame-alist)
 (setq package-enable-at-startup nil)
 (setq frame-inhibit-implied-resize t)
 

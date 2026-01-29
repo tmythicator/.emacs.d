@@ -56,8 +56,8 @@
   :bind (:map global-map
               ("C-c <tab>" . indent-buffer)
               ("M-i"       . imenu)
-              ("M-p"       . move-line-up)
-              ("M-n"       . move-line-down)
+              ("M-<up>"    . move-line-up)
+              ("M-<down>"  . move-line-down)
               ("M-'"       . duplicate-line))
   :custom
   (column-number-mode t)
@@ -147,8 +147,7 @@
 (use-package marginalia :init (marginalia-mode 1))
 
 (use-package consult
-  :bind (("C-z"     . consult-line)
-         ("C-s"     . consult-line)
+  :bind (("C-s"     . consult-line)
          ("C-S-s"   . consult-ripgrep)
          ("M-y"     . consult-yank-pop)
          ("C-x b"   . consult-buffer)
@@ -428,6 +427,23 @@
   :bind (("C-x o"   . ace-window) ("C-x C-o" . ace-swap-window))
   :custom (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+(use-package puni
+  :defer t
+  :init (puni-global-mode)
+  :bind (:map puni-mode-map
+              ("M-(" . puni-wrap-round)
+              ("M-{" . puni-wrap-curly)
+              ("M-[" . puni-wrap-square)
+              ("M-s" . puni-splice)
+              ("M-r" . puni-raise)
+              ("C-{" . puni-slurp-forward)
+              ("C-}" . puni-barf-forward)
+              ("M-d" . puni-forward-kill-word)
+              ("C-w" . puni-kill-region)))
+
 (use-package hl-todo :hook ((prog-mode . hl-todo-mode) (yaml-ts-mode . hl-todo-mode)))
 (use-package eros :hook (emacs-lisp-mode . eros-mode))
 
@@ -466,3 +482,11 @@
 
 (use-package nix-mode
   :mode "\\.nix\\'")
+
+(use-package ob-ts-node
+  :after org
+  :config
+  (ob-ts-node-setup)
+  (add-to-list 'org-babel-load-languages '(ts-node . t))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               org-babel-load-languages))
