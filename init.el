@@ -490,3 +490,27 @@
   (add-to-list 'org-babel-load-languages '(ts-node . t))
   (org-babel-do-load-languages 'org-babel-load-languages
                                org-babel-load-languages))
+
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
+
+(use-package clojure-mode
+  :mode (("\\.clj\\'" . clojure-mode)
+         ("\\.edn\\'" . clojure-mode))
+  :hook
+  ((clojure-mode . subword-mode)
+   (clojure-mode . puni-mode)
+   (clojure-mode . eglot-ensure)))
+
+(use-package cider
+  :hook ((clojure-mode . cider-mode)
+         (cider-repl-mode . puni-mode))
+  :bind (:map cider-mode-map
+              ("C-c u" . cider-user-ns)
+              :map cider-repl-mode-map
+              ("C-c M-o" . cider-repl-clear-buffer))
+  :custom
+  (cider-preferred-build-tool 'clojure-cli)
+  (cider-enrich-classpath t)
+  (cider-repl-display-help-banner nil)
+  (cider-repl-pop-to-buffer-on-connect 'display-only))
