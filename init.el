@@ -135,6 +135,11 @@
 ;; ── Completion stack
 (use-package vertico
   :init (vertico-mode 1)
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
   :custom (vertico-resize t) (vertico-cycle t))
 
 (use-package savehist :ensure nil :init (savehist-mode 1))
@@ -210,6 +215,7 @@
   :bind (:map dired-mode-map
               ([mouse-2] . dired-mouse-find-file)
               ([mouse-3] . dired-mouse-find-file-other-window)
+              ("j"       . consult-line)
               ("," . dired-hide-details-mode))
   :hook (dired-mode . dired-hide-details-mode))
 (use-package dired-x :ensure nil)
@@ -429,6 +435,17 @@
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
+
+(use-package iedit
+  :bind ("C-;" . iedit-mode))
+
+(defun query-replace-from-top ()
+  "Go to the beginning of the buffer (or narrowing) and start query-replace."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (call-interactively 'query-replace)))
+(global-set-key (kbd "C-c ;") 'query-replace-from-top)
 
 (use-package puni
   :defer t
