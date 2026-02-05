@@ -357,6 +357,19 @@
              (tags   priority-down category-keep)
              (search category-keep))))
 
+(use-package org-present
+  :bind (("<f9>" . org-present))
+  :hook
+  ((org-present-mode . (lambda ()
+                         (org-present-big)
+                         (org-display-inline-images)
+                         (org-present-read-only)))
+   (org-present-mode-quit . (lambda ()
+                              (org-present-small)
+                              (org-remove-inline-images)
+                              (org-present-show-cursor)
+                              (org-present-read-write)))))
+
 (use-package markdown-mode
   :mode (("\\.markdown\\'" . markdown-mode) ("\\.md\\'" . markdown-mode))
   :hook (markdown-mode . visual-line-mode))
@@ -505,6 +518,13 @@
   :config
   (ob-ts-node-setup)
   (add-to-list 'org-babel-load-languages '(ts-node . t))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               org-babel-load-languages))
+
+(use-package ob-mermaid
+  :after org
+  :config
+  (add-to-list 'org-babel-load-languages '(mermaid . t))
   (org-babel-do-load-languages 'org-babel-load-languages
                                org-babel-load-languages))
 
