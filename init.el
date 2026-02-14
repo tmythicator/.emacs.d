@@ -43,6 +43,7 @@
 
   (dolist (mapping '(("\\.ts\\'"       . typescript-ts-mode)
                      ("\\.tsx\\'"      . tsx-ts-mode)
+                     ("\\.java\\'"     . java-ts-mode)
                      ("\\.js\\'"       . js-ts-mode)
                      ("\\.mjs\\'"      . js-ts-mode)
                      ("\\.json\\'"     . json-ts-mode)
@@ -490,6 +491,7 @@
   ((typescript-ts-mode . eglot-ensure)
    (tsx-ts-mode . eglot-ensure)
    (js-ts-mode . eglot-ensure)
+   (java-ts-mode . eglot-ensure)
    (go-ts-mode . eglot-ensure))
   :bind (:map eglot-mode-map
               ("C-c l f" . eglot-format-buffer)
