@@ -111,15 +111,12 @@
 (use-package frame :ensure nil :bind ("C-z" . nil))
 
 ;; ── UI: Theme/Modeline/Icons/Tabs ───────────────────────────────────────
-(use-package doom-themes
-  :custom (doom-themes-enable-bold t) (doom-themes-enable-italic t)
-  :config
-  (load-theme 'doom-tokyo-night t)
-  (doom-themes-visual-bell-config)
-  (doom-themes-neotree-config)
-  (doom-themes-treemacs-config))
-
 (use-package doom-modeline :hook (after-init . doom-modeline-mode))
+
+(use-package catppuccin-theme
+  :config
+  (load-theme 'catppuccin :no-confirm)
+  (setq catppuccin-flavor 'mocha))
 
 ;; Icons
 (use-package all-the-icons :if (display-graphic-p))
@@ -235,6 +232,20 @@
 (use-package treemacs-projectile :after (treemacs projectile))
 (use-package treemacs-icons-dired :hook (dired-mode . treemacs-icons-dired-mode))
 (use-package treemacs-magit :after (treemacs magit))
+
+(use-package dirvish
+  :init (dirvish-override-dired-mode)
+  :custom
+  (dirvish-quick-access-entries
+   '(("h" "~/"                          "Home")
+     ("d" "~/Downloads/"                "Downloads")
+     ("p" "~/Development/"              "Projects")))
+  :config
+  (dirvish-peek-mode)
+  (setq dirvish-mode-line-format
+        '(:left (sort symlink) :right (omit yank index)))
+  (setq dirvish-attributes
+        '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)))
 
 ;; ── Shell / Eshell ──────────────────────────────────────────────────────
 (use-package exec-path-from-shell
