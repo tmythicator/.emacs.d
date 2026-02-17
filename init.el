@@ -553,3 +553,6 @@
   (cider-enrich-classpath t)
   (cider-repl-display-help-banner nil)
   (cider-repl-pop-to-buffer-on-connect 'display-only))
+
+(use-package eca
+  :bind ("C-c e" . eca))
