@@ -515,23 +515,12 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
-(use-package ob-ts-node
-  :after org
-  :config
-  (ob-ts-node-setup)
-  (add-to-list 'org-babel-load-languages '(ts-node . t))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               org-babel-load-languages))
-
 (use-package ob-mermaid
   :after org
   :config
   (add-to-list 'org-babel-load-languages '(mermaid . t))
   (org-babel-do-load-languages 'org-babel-load-languages
                                org-babel-load-languages))
-
-(use-package envrc
-  :hook (after-init . envrc-global-mode))
 
 (use-package clojure-mode
   :mode (("\\.clj\\'" . clojure-mode)
