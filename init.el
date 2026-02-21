@@ -159,9 +159,14 @@
          ("C-c m"   . consult-mode-command)
          ("C-c i"   . consult-imenu)
          ("C-c !"   . consult-flymake))
+  :init
+  (setq xref-show-definitions-function #'consult-xref
+        xref-show-xrefs-function #'consult-xref)
   :custom
   (register-preview-delay 0.3)
   (register-preview-function #'consult-register-format))
+
+(use-package consult-eglot :after (consult eglot))
 
 (use-package embark
   :bind (("C-." . embark-act)
@@ -515,6 +520,11 @@
   ;; (add-hook 'before-save-hook
   ;;           (lambda () (when (eglot-managed-p) (eglot-format-buffer))))
   )
+
+(use-package dumb-jump
+  :custom (dumb-jump-selector 'completing-read)
+  :config
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;; Flymake
 (use-package flymake
