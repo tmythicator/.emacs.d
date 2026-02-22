@@ -401,6 +401,10 @@
                                org-babel-load-languages))
 (use-package ob-async :defer t)
 
+(use-package vlf
+  :init (require 'vlf-setup)
+  :custom (vlf-application 'ask))
+
 ;; Dashboard
 (use-package dashboard
   :bind ("<f5>" . open-dashboard-buffer)
