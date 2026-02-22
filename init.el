@@ -1,14 +1,11 @@
 ;; ── Bootstrap ────────────────────────────────────────────────────────────
 (require 'package)
-(setq package-archives
-      '(("gnu"   . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")))
-(unless package--initialized (package-initialize))
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents) (package-install 'use-package))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
 (eval-when-compile (require 'use-package))
+(setq use-short-answers t)
 (put 'use-package 'lisp-indent-function 1)
-(defalias 'yes-or-no-p 'y-or-n-p)
 
 (setq use-package-always-ensure t
       use-package-expand-minimally t
@@ -25,12 +22,10 @@
                       (locate-user-emacs-file "NUL")
                     null-device))
 
-(use-package system-packages :custom (system-packages-noconfirm t))
-(use-package quelpa :defer t :custom (quelpa-update-melpa-p nil))
-(use-package quelpa-use-package)
 
-(use-package envrc
-  :hook (after-init . envrc-global-mode))
+
+(use-package envrc :hook (after-init . envrc-global-mode))
+
 
 ;; ── Basic UX ─────────────────────────────────────────────────────────────
 (use-package emacs
