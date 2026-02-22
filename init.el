@@ -89,7 +89,13 @@
   (use-package recentf
     :ensure nil
     :init (recentf-mode 1)
-    :custom (recentf-auto-cleanup 'never)
+    :custom
+    (recentf-auto-cleanup 'never)
+    (recentf-max-saved-items 1000)
+    (recentf-exclude
+     '(".gz$" ".xz$" ".zip$" ".tar$" "\\.git/.*\\'" "\\.cljs_rhino/.*\\'"
+       "node_modules" "target" "dist" "build" "out" "/\\.emacs\\.d/var/.*\\'"
+       (lambda (file) (> (nth 7 (file-attributes file)) (* 1 1024 1024)))))
     :config (run-with-idle-timer 60 t #'recentf-save-list))
   (setq backup-directory-alist
         `(("." . ,(no-littering-expand-var-file-name "backup/")))
