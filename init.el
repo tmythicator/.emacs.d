@@ -31,23 +31,20 @@
 (use-package emacs
   :ensure nil
   :init
-  (put 'narrow-to-region 'disabled nil)
-  (put 'downcase-region 'disabled nil)
   (delete-selection-mode 1)
   (electric-pair-mode 1)
+  (setq major-mode-remap-alist
+        '((typescript-mode . typescript-ts-mode)
+          (tsx-mode        . tsx-ts-mode)
+          (java-mode       . java-ts-mode)
+          (js-mode         . js-ts-mode)
+          (json-mode       . json-ts-mode)
+          (yaml-mode       . yaml-ts-mode)
+          (dockerfile-mode . dockerfile-ts-mode)
+          (go-mode         . go-ts-mode)))
+  (put 'narrow-to-region 'disabled nil)
+  (put 'downcase-region 'disabled nil)
 
-  (dolist (mapping '(("\\.ts\\'"       . typescript-ts-mode)
-                     ("\\.tsx\\'"      . tsx-ts-mode)
-                     ("\\.java\\'"     . java-ts-mode)
-                     ("\\.js\\'"       . js-ts-mode)
-                     ("\\.mjs\\'"      . js-ts-mode)
-                     ("\\.json\\'"     . json-ts-mode)
-                     ("\\.yaml\\'"     . yaml-ts-mode)
-                     ("Dockerfile\\'"  . dockerfile-ts-mode)
-                     ("\\.go\\'"       . go-ts-mode)
-                     ("/go\\.mod\\'"   . go-mod-ts-mode)
-                     ("\\.nix\\'"      . nix-mode)))
-    (add-to-list 'auto-mode-alist mapping))
   :hook (prog-mode . display-line-numbers-mode)
   :bind (:map global-map
               ("C-c <tab>" . indent-buffer)
