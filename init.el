@@ -127,7 +127,18 @@
   (setq catppuccin-flavor 'mocha))
 
 ;; Icons
-(use-package all-the-icons :if (display-graphic-p))
+(use-package nerd-icons :if (display-graphic-p))
+
+(use-package which-key
+  :init (which-key-mode)
+  :custom (which-key-idle-delay 0.3))
+
+(use-package helpful
+  :bind
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-key]      . helpful-key)
+  ([remap describe-command]  . helpful-command))
 
 (use-package menu-bar :ensure nil :bind ([S-f10] . menu-bar-mode))
 (use-package tooltip :ensure nil :custom (tooltip-mode -1))
@@ -197,23 +208,15 @@
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-keyword))
 
-(use-package kind-icon
+(use-package nerd-icons-corfu
   :after corfu
-  :custom
-  (kind-icon-default-head '(:height 0.8 :scale 0.8))
-  (kind-icon-use-icons t)
   :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 ;; ── Project / Git / Grep ────────────────────────────────────────────────
-(use-package projectile
-  :init (projectile-mode 1)
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :custom
-  (projectile-enable-caching t)
-  (projectile-auto-discover nil)
-  (projectile-track-known-projects-automatically nil)
-  (projectile-completion-system 'default))
+(use-package project
+  :ensure nil
+  :bind-keymap ("C-c p" . project-prefix-map))
 
 (use-package magit :bind ("C-x g" . magit-status))
 (use-package git-gutter-fringe :diminish git-gutter-mode :config (global-git-gutter-mode 1))
@@ -242,7 +245,6 @@
   :bind (:map global-map
               ("C-x C-n" . treemacs)
               ("C-x t b" . treemacs-bookmark)))
-(use-package treemacs-projectile :after (treemacs projectile))
 (use-package treemacs-icons-dired :hook (dired-mode . treemacs-icons-dired-mode))
 (use-package treemacs-magit :after (treemacs magit))
 
@@ -258,7 +260,7 @@
   (setq dirvish-mode-line-format
         '(:left (sort symlink) :right (omit yank index)))
   (setq dirvish-attributes
-        '(all-the-icons file-time file-size collapse subtree-state vc-state git-msg)))
+        '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg)))
 
 ;; ── Shell / Eshell ──────────────────────────────────────────────────────
 (use-package exec-path-from-shell
