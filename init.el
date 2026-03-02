@@ -245,7 +245,6 @@
   :bind (:map global-map
               ("C-x C-n" . treemacs)
               ("C-x t b" . treemacs-bookmark)))
-(use-package treemacs-icons-dired :hook (dired-mode . treemacs-icons-dired-mode))
 (use-package treemacs-magit :after (treemacs magit))
 
 (use-package dirvish
