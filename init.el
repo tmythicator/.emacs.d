@@ -348,9 +348,19 @@
              "* %<%I:%M %p> - Journal :journal:\n%?"
              :empty-lines 1 :kill-buffer t))))
   (setq org-babel-load-languages
-        '((python . t) (shell . t) (java . t) (sql . t) (lisp . t)))
+        '((python . t) (shell . t) (java . t) (sql . t) (sqlite . t) (lisp . t) (restclient . t)))
   (org-babel-do-load-languages
    'org-babel-load-languages org-babel-load-languages))
+
+(use-package restclient
+  :mode ("\\.http\\'" . restclient-mode))
+
+(use-package ob-restclient
+  :after (org restclient))
+
+(use-package sql-indent
+  :after sql
+  :hook (sql-mode . sql-indent-mode))
 
 (use-package org-habit
   :ensure nil
