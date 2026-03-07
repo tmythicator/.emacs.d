@@ -299,21 +299,16 @@
 
 (use-package vterm
   :commands vterm
+  :bind (:map vterm-mode-map
+              ("C-c C-y" . vterm-copy-mode))
   :custom
   (vterm-max-scrollback 10000))
 
 (use-package vterm-toggle
-  :bind ("M-~" . vterm-toggle)
+  :bind ("M-`" . vterm-toggle)
   :custom
   (vterm-toggle-fullscreen-p nil)
   (vterm-toggle-scope 'project))
-
-(use-package eshell-toggle
-  :bind ("M-`" . eshell-toggle)
-  :custom
-  (eshell-toggle-use-projectile-root t)
-  (eshell-toggle-run-command nil)
-  (eshell-toggle-size-fraction 3))
 
 (use-package ansi-color :defer t)
 (use-package compile
