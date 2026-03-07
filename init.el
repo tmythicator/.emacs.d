@@ -223,7 +223,7 @@
 (use-package git-timemachine :defer t)
 (use-package rg :config (rg-enable-default-bindings))
 
-;; ── Dired / Treemacs ────────────────────────────────────────────────────
+;; ── Dired / Dirvish  ────────────────────────────────────────────────────
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
@@ -241,15 +241,12 @@
              :init (with-eval-after-load 'dired (dired-async-mode 1)))
 (use-package dired-rsync :bind (:map dired-mode-map ("r" . dired-rsync)))
 
-(use-package treemacs
-  :bind (:map global-map
-              ("C-x C-n" . treemacs)
-              ("C-x t b" . treemacs-bookmark)))
-(use-package treemacs-magit :after (treemacs magit))
-
 (use-package dirvish
   :init (dirvish-override-dired-mode)
+  :bind (("C-x C-n" . dirvish-side))
   :custom
+  (dirvish-side-width 30)
+  (dirvish-side-auto-expand t)
   (dirvish-quick-access-entries
    '(("h" "~/"                          "Home")
      ("d" "~/Downloads/"                "Downloads")
@@ -260,6 +257,7 @@
         '(:left (sort symlink) :right (omit yank index)))
   (setq dirvish-attributes
         '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg)))
+
 
 ;; ── Shell / Eshell ──────────────────────────────────────────────────────
 (use-package exec-path-from-shell
@@ -298,6 +296,17 @@
   :config
   (setq eshell-visual-commands
         '("htop" "top" "less" "more" "ssh" "tmux" "docker-compose" "node" "ipython" "pip" "pipenv")))
+
+(use-package vterm
+  :commands vterm
+  :custom
+  (vterm-max-scrollback 10000))
+
+(use-package vterm-toggle
+  :bind ("M-~" . vterm-toggle)
+  :custom
+  (vterm-toggle-fullscreen-p nil)
+  (vterm-toggle-scope 'project))
 
 (use-package eshell-toggle
   :bind ("M-`" . eshell-toggle)
