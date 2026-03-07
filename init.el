@@ -302,6 +302,7 @@
   :bind (:map vterm-mode-map
               ("C-c C-y" . vterm-copy-mode))
   :custom
+  (vterm-always-compile-module t)
   (vterm-max-scrollback 10000))
 
 (use-package vterm-toggle
