@@ -595,3 +595,22 @@
 
 (use-package eca
   :bind ("C-c e" . eca))
+
+(use-package copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . my/copilot-tab)
+              ("TAB" . my/copilot-tab)
+              ("M-f" . copilot-accept-completion-by-word)
+              ("C-e" . copilot-accept-completion-by-line)
+              ("M-n" . copilot-next-completion)
+              ("M-p" . copilot-previous-completion)
+              ("C-g" . copilot-clear-completion))
+  :custom
+  (copilot-idle-delay 0.3)
+  (copilot-max-char 1000000)
+  :config
+  (defun my/copilot-tab ()
+    (interactive)
+    (or (copilot-accept-completion)
+        (indent-for-tab-command))))
