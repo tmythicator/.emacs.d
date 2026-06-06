@@ -18,12 +18,6 @@
         mac-right-command-modifier nil
         mac-command-modifier 'meta))
 
-(setq custom-file (if (eq system-type 'windows-nt)
-                      (locate-user-emacs-file "NUL")
-                    null-device))
-
-
-
 (use-package envrc :hook (after-init . envrc-global-mode))
 
 
@@ -96,6 +90,7 @@
 
 (use-package no-littering
   :config
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   (use-package recentf
     :ensure nil
     :init (recentf-mode 1)
@@ -298,11 +293,11 @@
         '("htop" "top" "less" "more" "ssh" "tmux" "docker-compose" "node" "ipython" "pip" "pipenv")))
 
 (use-package vterm
+  :ensure nil
   :commands vterm
   :bind (:map vterm-mode-map
               ("C-c C-y" . vterm-copy-mode))
   :custom
-  (vterm-always-compile-module t)
   (vterm-max-scrollback 10000))
 
 (use-package vterm-toggle
