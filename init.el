@@ -325,12 +325,14 @@
   :custom
   (org-log-done 'time)
   (org-log-into-drawer t)
-  (org-agenda-files '("~/Org/Tasks.org"))
+  (org-agenda-files '("~/Org/Tasks.org" "~/Org/Habits.org"))
   (org-return-follows-link t)
   (org-image-actual-width nil)
   (org-src-tab-acts-natively t)
   (org-edit-src-content-indentation 0)
   (org-hide-emphasis-markers t)
+  (org-use-fast-todo-selection t)
+  (org-todo-keywords '((sequence "TODO(t)" "IN-PROGRESS(p)" "|" "DONE(d!)" "SKIPPED(s@/!)" "CANCELED(c@/!)")))
   :config
   (defun org/visual-setup () (visual-line-mode 1) (org-indent-mode) (variable-pitch-mode 1) (auto-fill-mode 0))
   (defun org/refiling-setup ()
