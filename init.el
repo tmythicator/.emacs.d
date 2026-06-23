@@ -1,5 +1,6 @@
 ;; ── Bootstrap ────────────────────────────────────────────────────────────
 (require 'package)
+(setq package-install-upgrade-built-in t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
