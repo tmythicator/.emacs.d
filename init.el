@@ -1,7 +1,7 @@
 ;; ── Bootstrap ────────────────────────────────────────────────────────────
 (require 'package)
-(setq package-install-upgrade-built-in t)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-pinned-packages '(vterm . "nix-managed"))
 (package-initialize)
 
 (eval-when-compile (require 'use-package))
@@ -395,6 +395,12 @@
              (todo   priority-down category-keep)
              (tags   priority-down category-keep)
              (search category-keep))))
+
+(use-package org-atomic
+  :vc (org-atomic
+       :url "https://github.com/tmythicator/org-atomic"
+       :rev :newest)
+  :init (org-atomic-mode 1))
 
 (use-package org-present
   :bind (("<f9>" . org-present))
