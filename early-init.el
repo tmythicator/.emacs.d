@@ -5,11 +5,13 @@
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setq file-name-handler-alist file-name-handler-alist-original)))
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-(push '(undecorated . t) default-frame-alist)
+(unless (eq system-type 'android)
+  (push '(menu-bar-lines . 0) default-frame-alist)
+  (push '(tool-bar-lines . 0) default-frame-alist)
+  (push '(vertical-scroll-bars) default-frame-alist))
 (push '(alpha . (95 . 75)) default-frame-alist)
+(when (eq system-type 'gnu/linux)
+  (push '(undecorated . t) default-frame-alist))
 (setq package-enable-at-startup nil)
 (setq frame-inhibit-implied-resize t)
 

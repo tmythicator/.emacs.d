@@ -43,8 +43,7 @@
                      ("\\.yml\\'"      . yaml-ts-mode)
                      ("Dockerfile\\'"  . dockerfile-ts-mode)
                      ("\\.go\\'"       . go-ts-mode)
-                     ("/go\\.mod\\'"   . go-mod-ts-mode)
-                     ("\\.nix\\'"      . nix-mode)))
+                     ("/go\\.mod\\'"   . go-mod-ts-mode)))
     (add-to-list 'auto-mode-alist mapping))
 
   (put 'narrow-to-region 'disabled nil)
@@ -92,6 +91,8 @@
 (use-package no-littering
   :config
   (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (when (file-exists-p custom-file)
+    (load custom-file 'noerror))
   (use-package recentf
     :ensure nil
     :init (recentf-mode 1)
@@ -294,6 +295,7 @@
         '("htop" "top" "less" "more" "ssh" "tmux" "docker-compose" "node" "ipython" "pip" "pipenv")))
 
 (use-package vterm
+  :if (not (eq system-type 'android))
   :ensure nil
   :commands vterm
   :bind (:map vterm-mode-map
@@ -302,6 +304,7 @@
   (vterm-max-scrollback 10000))
 
 (use-package vterm-toggle
+  :if (not (eq system-type 'android))
   :bind ("M-`" . vterm-toggle)
   :custom
   (vterm-toggle-fullscreen-p nil)
