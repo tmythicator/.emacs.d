@@ -569,6 +569,16 @@
   :hook
   ((emacs-lisp-mode) . (lambda () (flymake-mode -1))))
 
+(use-package kotlin-ts-mode
+  :vc (:url "https://github.com/emacsmirror/kotlin-ts-mode"
+            :rev :newest)
+  :mode "\\.kts?\\'"
+  :hook (kotlin-ts-mode . eglot-ensure)
+  :config
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '(kotlin-ts-mode . ("kotlin-language-server")))))
+
 (use-package nix-mode
   :mode "\\.nix\\'")
 
