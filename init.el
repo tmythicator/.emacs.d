@@ -1,4 +1,6 @@
-;; ── Bootstrap ────────────────────────────────────────────────────────────
+;;; init.el --- Emacs configuration  -*- lexical-binding: t; -*-
+
+;; Bootstrap & System Settings
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-pinned-packages '(vterm . "nix-managed"))
@@ -19,10 +21,46 @@
         mac-right-command-modifier nil
         mac-command-modifier 'meta))
 
+;; Core system integrations
 (use-package envrc :hook (after-init . envrc-global-mode))
 
+(use-package exec-path-from-shell
+  :if (memq system-type '(gnu/linux darwin))
+  :init (exec-path-from-shell-initialize)
+  :custom
+  (exec-path-from-shell-variables '("PATH" "SHELL" "MANPATH"))
+  (exec-path-from-shell-arguments '("-l")))
 
-;; ── Basic UX ─────────────────────────────────────────────────────────────
+(use-package gcmh
+  :init
+  (gcmh-mode 1)
+  :custom
+  (gcmh-idle-delay 0.5)
+  (gcmh-high-cons-threshold (* 16 1024 1024)))
+
+(use-package no-littering
+  :config
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+  (when (file-exists-p custom-file)
+    (load custom-file 'noerror))
+  (use-package recentf
+    :ensure nil
+    :init (recentf-mode 1)
+    :custom
+    (recentf-auto-cleanup 'never)
+    (recentf-max-saved-items 1000)
+    (recentf-exclude
+     '(".gz$" ".xz$" ".zip$" ".tar$" "\\.git/.*\\'" "\\.cljs_rhino/.*\\'"
+       "node_modules" "target" "dist" "build" "out" "/\\.emacs\\.d/var/.*\\'"
+       (lambda (file) (> (nth 7 (file-attributes file)) (* 1 1024 1024)))))
+    :config (run-with-idle-timer 60 t #'recentf-save-list))
+  (setq backup-directory-alist
+        `(("." . ,(no-littering-expand-var-file-name "backup/")))
+        make-backup-files t
+        create-lockfiles nil))
+
+
+;; Core UX & Editing Utilities
 (use-package emacs
   :ensure nil
   :init
@@ -77,54 +115,76 @@
          (let ((col (current-column))) (move-beginning-of-line 1) (kill-line) (yank) (newline) (yank) (move-to-column col))))
 
 (use-package so-long :ensure nil :config (global-so-long-mode 1) :custom (so-long-threshold 4000))
-
-;; Editing niceties
 (use-package autorevert :ensure nil :init (global-auto-revert-mode 1) :custom (auto-revert-verbose nil))
-
-(use-package gcmh
-  :init
-  (gcmh-mode 1)
-  :custom
-  (gcmh-idle-delay 0.5)
-  (gcmh-high-cons-threshold (* 16 1024 1024)))
-
-(use-package no-littering
-  :config
-  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
-  (when (file-exists-p custom-file)
-    (load custom-file 'noerror))
-  (use-package recentf
-    :ensure nil
-    :init (recentf-mode 1)
-    :custom
-    (recentf-auto-cleanup 'never)
-    (recentf-max-saved-items 1000)
-    (recentf-exclude
-     '(".gz$" ".xz$" ".zip$" ".tar$" "\\.git/.*\\'" "\\.cljs_rhino/.*\\'"
-       "node_modules" "target" "dist" "build" "out" "/\\.emacs\\.d/var/.*\\'"
-       (lambda (file) (> (nth 7 (file-attributes file)) (* 1 1024 1024)))))
-    :config (run-with-idle-timer 60 t #'recentf-save-list))
-  (setq backup-directory-alist
-        `(("." . ,(no-littering-expand-var-file-name "backup/")))
-        make-backup-files t
-        create-lockfiles nil))
-
 (use-package files
   :ensure nil
   :hook (before-save . delete-trailing-whitespace))
-
 (use-package frame :ensure nil :bind ("C-z" . nil))
 
-;; ── UI: Theme/Modeline/Icons/Tabs ───────────────────────────────────────
-(use-package doom-modeline :hook (after-init . doom-modeline-mode))
+;; Global Editing & Navigation Utilities
+(use-package avy
+  :bind (("C-," . avy-goto-char-timer)
+         :map goto-map
+         ("M-c" . avy-goto-char)
+         ("M-g" . avy-goto-line)))
 
+(use-package ace-window
+  :bind (("C-x o"   . ace-window) ("C-x C-o" . ace-swap-window))
+  :custom (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+(use-package winner :ensure nil :config (winner-mode 1))
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+(use-package iedit
+  :bind ("C-;" . iedit-mode))
+
+(defun query-replace-from-top ()
+  "Go to the beginning of the buffer (or narrowing) and start query-replace."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (call-interactively 'query-replace)))
+(global-set-key (kbd "C-c ;") 'query-replace-from-top)
+
+(use-package puni
+  :defer t
+  :init (puni-global-mode)
+  :bind (:map puni-mode-map
+              ("M-(" . puni-wrap-round)
+              ("M-{" . puni-wrap-curly)
+              ("M-[" . puni-wrap-square)
+              ("M-s" . puni-splice)
+              ("M-r" . puni-raise)
+              ("C-{" . puni-slurp-forward)
+              ("C-}" . puni-barf-forward)
+              ("M-d" . puni-forward-kill-word)
+              ("C-w" . puni-kill-region)))
+
+(use-package shrink-whitespace
+  :commands shrink-whitespace
+  :bind ("C-c DEL" . shrink-whitespace))
+
+
+;; UI, Themes & Information Display
 (use-package catppuccin-theme
   :config
   (load-theme 'catppuccin :no-confirm)
   (setq catppuccin-flavor 'mocha))
 
-;; Icons
+(use-package doom-modeline :hook (after-init . doom-modeline-mode))
 (use-package nerd-icons :if (display-graphic-p))
+
+(use-package dashboard
+  :bind ("<f5>" . open-dashboard-buffer)
+  :init
+  (defun open-dashboard-buffer ()
+    (interactive) (switch-to-buffer "*dashboard*"))
+  (dashboard-setup-startup-hook)
+  :custom
+  (dashboard-startup-banner  'logo)
+  (dashboard-items '((recents . 5) (bookmarks . 3)
+                     (projects . 5) (agenda . 10))))
 
 (use-package which-key
   :init (which-key-mode)
@@ -146,7 +206,8 @@
 (use-package rainbow-delimiters :hook (prog-mode . rainbow-delimiters-mode))
 (use-package rainbow-mode :hook (prog-mode . rainbow-mode))
 
-;; ── Completion stack
+
+;; Completion Stack
 (use-package vertico
   :init (vertico-mode 1)
   :bind (:map vertico-map
@@ -191,7 +252,6 @@
   :init (setq prefix-help-command #'embark-prefix-help-command))
 (use-package embark-consult :after (embark consult))
 
-;; ── Popup completion via CAPF: corfu (+ cape)
 (use-package corfu
   :init (global-corfu-mode 1)
   :custom
@@ -210,17 +270,8 @@
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
-;; ── Project / Git / Grep ────────────────────────────────────────────────
-(use-package project
-  :ensure nil
-  :bind-keymap ("C-c p" . project-prefix-map))
 
-(use-package magit :bind ("C-x g" . magit-status))
-(use-package git-gutter-fringe :diminish git-gutter-mode :config (global-git-gutter-mode 1))
-(use-package git-timemachine :defer t)
-(use-package rg :config (rg-enable-default-bindings))
-
-;; ── Dired / Dirvish  ────────────────────────────────────────────────────
+;; File Management (Dired & Dirvish)
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
@@ -256,14 +307,47 @@
         '(nerd-icons file-time file-size collapse subtree-state vc-state git-msg)))
 
 
-;; ── Shell / Eshell ──────────────────────────────────────────────────────
-(use-package exec-path-from-shell
-  :if (memq system-type '(gnu/linux darwin))
-  :init (exec-path-from-shell-initialize)
-  :custom
-  (exec-path-from-shell-variables '("PATH" "SHELL" "MANPATH"))
-  (exec-path-from-shell-arguments '("-l")))
+;; Project, Git & Search
+(use-package project
+  :ensure nil
+  :bind-keymap ("C-c p" . project-prefix-map))
 
+(use-package magit :bind ("C-x g" . magit-status))
+(use-package git-gutter-fringe :diminish git-gutter-mode :config (global-git-gutter-mode 1))
+(use-package git-timemachine :defer t)
+(use-package rg :config (rg-enable-default-bindings))
+(use-package wgrep :defer t)
+
+(use-package hydra
+  :bind (("C-c C-m" . hydra-smerge/body)
+         ("C-c C-g" . hydra-git-gutter/body))
+  :config
+  (defhydra hydra-smerge (:color red :hint nil :pre (smerge-mode 1))
+    ("RET" smerge-keep-current "current" :column "Keep")
+    ("u" smerge-keep-upper "upper") ("l" smerge-keep-lower "lower")
+    ("a" smerge-keep-all "all")     ("b" smerge-keep-base "base")
+    ("m" smerge-keep-mine "mine")   ("o" smerge-keep-other "other")
+    ("n" smerge-next "next" :column "Nav") ("p" smerge-prev "prev")
+    ("<" smerge-diff-base-mine "base-mine" :column "Diff")
+    ("=" smerge-diff-mine-other "mine-other")
+    (">" smerge-diff-base-other "base-other")
+    ("C" smerge-combine-with-next "combine" :column "Other")
+    ("R" smerge-refine "refine")
+    ("r" smerge-resolve "resolve")
+    ("E" smerge-ediff "ediff")
+    ("q" nil "quit" :color blue))
+  (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1) :hint nil)
+    ("n" git-gutter:next-hunk "next" :column "Nav")
+    ("p" git-gutter:previous-hunk "prev")
+    ("h" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)) "first")
+    ("l" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)) "last")
+    ("s" git-gutter:stage-hunk "stage" :column "Stage")
+    ("r" git-gutter:revert-hunk "revert")
+    ("<SPC>" git-gutter:popup-hunk "popup" :column "Show")
+    ("q" nil "quit")))
+
+
+;; Shells & Terminals
 (use-package eshell-syntax-highlighting
   :hook (eshell-mode . eshell-syntax-highlighting-mode))
 
@@ -321,6 +405,8 @@
       (when (require 'ansi-color nil t)
         (ansi-color-apply-on-region compilation-filter-start (point))))))
 
+
+;; Org-Mode & Writing
 (use-package org
   :hook ((org-mode . org/visual-setup)
          (org-mode . org/refiling-setup)
@@ -434,103 +520,14 @@
                                org-babel-load-languages))
 (use-package ob-async :defer t)
 
-(use-package vlf
-  :init (require 'vlf-setup)
-  :custom (vlf-application 'ask))
-
-;; Dashboard
-(use-package dashboard
-  :bind ("<f5>" . open-dashboard-buffer)
-  :init
-  (defun open-dashboard-buffer ()
-    (interactive) (switch-to-buffer "*dashboard*"))
-  (dashboard-setup-startup-hook)
-  :custom
-
-  (dashboard-startup-banner  'logo)
-  (dashboard-items '((recents . 5) (bookmarks . 3)
-                     (projects . 5) (agenda . 10))))
-
-(use-package shrink-whitespace
-  :commands shrink-whitespace
-  :bind ("C-c DEL" . shrink-whitespace))
-
-(use-package apheleia
-  :bind ("C-c f" . apheleia-format-buffer)
+(use-package ob-mermaid
+  :after org
   :config
-  (apheleia-global-mode +1))
+  (add-to-list 'org-babel-load-languages '(mermaid . t))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               org-babel-load-languages))
 
-(use-package hydra
-  :bind (("C-c C-m" . hydra-smerge/body)
-         ("C-c C-g" . hydra-git-gutter/body))
-  :config
-  (defhydra hydra-smerge (:color red :hint nil :pre (smerge-mode 1))
-    ("RET" smerge-keep-current "current" :column "Keep")
-    ("u" smerge-keep-upper "upper") ("l" smerge-keep-lower "lower")
-    ("a" smerge-keep-all "all")     ("b" smerge-keep-base "base")
-    ("m" smerge-keep-mine "mine")   ("o" smerge-keep-other "other")
-    ("n" smerge-next "next" :column "Nav") ("p" smerge-prev "prev")
-    ("<" smerge-diff-base-mine "base-mine" :column "Diff")
-    ("=" smerge-diff-mine-other "mine-other")
-    (">" smerge-diff-base-other "base-other")
-    ("C" smerge-combine-with-next "combine" :column "Other")
-    ("R" smerge-refine "refine")
-    ("r" smerge-resolve "resolve")
-    ("E" smerge-ediff "ediff")
-    ("q" nil "quit" :color blue))
-  (defhydra hydra-git-gutter (:body-pre (git-gutter-mode 1) :hint nil)
-    ("n" git-gutter:next-hunk "next" :column "Nav")
-    ("p" git-gutter:previous-hunk "prev")
-    ("h" (progn (goto-char (point-min)) (git-gutter:next-hunk 1)) "first")
-    ("l" (progn (goto-char (point-min)) (git-gutter:previous-hunk 1)) "last")
-    ("s" git-gutter:stage-hunk "stage" :column "Stage")
-    ("r" git-gutter:revert-hunk "revert")
-    ("<SPC>" git-gutter:popup-hunk "popup" :column "Show")
-    ("q" nil "quit")))
-
-(use-package winner :ensure nil :config (winner-mode 1))
-(use-package wgrep :defer t)
-(use-package avy
-  :bind (("C-," . avy-goto-char-timer)
-         :map goto-map
-         ("M-c" . avy-goto-char)
-         ("M-g" . avy-goto-line)))
-(use-package ace-window
-  :bind (("C-x o"   . ace-window) ("C-x C-o" . ace-swap-window))
-  :custom (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-
-(use-package expand-region
-  :bind ("C-=" . er/expand-region))
-
-(use-package iedit
-  :bind ("C-;" . iedit-mode))
-
-(defun query-replace-from-top ()
-  "Go to the beginning of the buffer (or narrowing) and start query-replace."
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (call-interactively 'query-replace)))
-(global-set-key (kbd "C-c ;") 'query-replace-from-top)
-
-(use-package puni
-  :defer t
-  :init (puni-global-mode)
-  :bind (:map puni-mode-map
-              ("M-(" . puni-wrap-round)
-              ("M-{" . puni-wrap-curly)
-              ("M-[" . puni-wrap-square)
-              ("M-s" . puni-splice)
-              ("M-r" . puni-raise)
-              ("C-{" . puni-slurp-forward)
-              ("C-}" . puni-barf-forward)
-              ("M-d" . puni-forward-kill-word)
-              ("C-w" . puni-kill-region)))
-
-(use-package hl-todo :hook ((prog-mode . hl-todo-mode) (yaml-ts-mode . hl-todo-mode)))
-(use-package eros :hook (emacs-lisp-mode . eros-mode))
-
-;; EGLOT
+;; Development & Programming Languages
 (use-package eldoc
   :ensure nil
   :custom
@@ -551,23 +548,23 @@
               ("C-c l a" . eglot-code-actions)
               ("C-c l o" . eglot-code-action-organize-imports))
   :config
-  (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider)
-  ;; Formatting
-  ;; (add-hook 'before-save-hook
-  ;;           (lambda () (when (eglot-managed-p) (eglot-format-buffer))))
-  )
+  (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider))
 
 (use-package dumb-jump
   :custom (dumb-jump-selector 'completing-read)
   :config
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
-;; Flymake
 (use-package flymake
   :ensure nil
   :hook (prog-mode . flymake-mode)
   :hook
   ((emacs-lisp-mode) . (lambda () (flymake-mode -1))))
+
+(use-package apheleia
+  :bind ("C-c f" . apheleia-format-buffer)
+  :config
+  (apheleia-global-mode +1))
 
 (use-package kotlin-ts-mode
   :vc (:url "https://github.com/emacsmirror/kotlin-ts-mode"
@@ -581,13 +578,6 @@
 
 (use-package nix-mode
   :mode "\\.nix\\'")
-
-(use-package ob-mermaid
-  :after org
-  :config
-  (add-to-list 'org-babel-load-languages '(mermaid . t))
-  (org-babel-do-load-languages 'org-babel-load-languages
-                               org-babel-load-languages))
 
 (use-package clojure-mode
   :mode (("\\.clj\\'" . clojure-mode)
@@ -612,3 +602,12 @@
 
 (use-package eca
   :bind ("C-c e" . eca))
+
+(use-package vlf
+  :init (require 'vlf-setup)
+  :custom (vlf-application 'ask))
+
+(use-package hl-todo :hook ((prog-mode . hl-todo-mode) (yaml-ts-mode . hl-todo-mode)))
+(use-package eros :hook (emacs-lisp-mode . eros-mode))
+
+;;; init.el ends here
