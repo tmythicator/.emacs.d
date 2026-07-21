@@ -634,12 +634,56 @@ LSP config (Eglot), compiler, formatting (Apheleia), major modes, and developmen
   (cider-repl-display-help-banner nil)
   (cider-repl-pop-to-buffer-on-connect 'display-only))
 
-(use-package eca
-  :bind ("C-c e" . eca))
+(use-package gptel
+  :bind (("C-c g" . gptel)
+         ("C-c G" . gptel-menu)
+         ("C-c r" . gptel-rewrite))
+  :config
+  (setq gptel-default-mode 'org-mode
+        gptel-model 'ornith:9b
+        gptel-backend (gptel-make-ollama "Ollama"
+                        :host "localhost:11434"
+                        :stream t
+                        :models '(ornith:9b))))
+
 
 (use-package vlf
   :init (require 'vlf-setup)
   :custom (vlf-application 'ask))
+
+(use-package yaml-ts-mode
+  :ensure nil
+  :preface
+  (defun my/yaml-ts-outdent ()
+    ""
+    (interactive)
+    (let ((deactivate-mark nil)
+          (shift-amt (- tab-width)))
+      (if (use-region-p)
+          (indent-rigidly (region-beginning) (region-end) shift-amt)
+        (indent-rigidly (line-beginning-position) (line-end-position) shift-amt))))
+
+  (defun my/yaml-ts-indent ()
+    ""
+    (interactive)
+    (let ((deactivate-mark nil)
+          (shift-amt tab-width))
+      (if (use-region-p)
+          (indent-rigidly (region-beginning) (region-end) shift-amt)
+        (indent-rigidly (line-beginning-position) (line-end-position) shift-amt))))
+
+  :bind (:map yaml-ts-mode-map
+              ("<backtab>" . my/yaml-ts-outdent)
+              ("<tab>"     . my/yaml-ts-indent)
+              ("TAB"       . my/yaml-ts-indent))
+
+  :config
+  (add-hook 'yaml-ts-mode-hook
+            (lambda ()
+              (setq indent-tabs-mode nil)
+              (setq tab-width 2)
+              (setq-local standard-indent 2)
+              (setq show-trailing-whitespace t))))
 
 (use-package hl-todo :hook ((prog-mode . hl-todo-mode) (yaml-ts-mode . hl-todo-mode)))
 (use-package eros :hook (emacs-lisp-mode . eros-mode))
