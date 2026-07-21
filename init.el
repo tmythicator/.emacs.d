@@ -248,11 +248,12 @@
 (use-package embark-consult :after (embark consult))
 
 (use-package corfu
-  :init (global-corfu-mode 1)
   :custom
   (corfu-auto t)
   (corfu-auto-delay 0.05)
-  (corfu-auto-prefix 1))
+  (corfu-auto-prefix 1)
+  :config
+  (global-corfu-mode 1))
 
 (use-package cape
   :init
