@@ -1,7 +1,5 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-pinned-packages '(vterm . "nix-managed"))
-(add-to-list 'package-pinned-packages '(vterm-toggle . "nix-managed"))
 (package-initialize)
 
 (eval-when-compile (require 'use-package))
@@ -371,7 +369,6 @@
 
 (use-package vterm
   :if (not (eq system-type 'android))
-  :ensure nil
   :commands vterm
   :bind (:map vterm-mode-map
               ("C-c C-y" . vterm-copy-mode))
@@ -380,7 +377,6 @@
 
 (use-package vterm-toggle
   :if (not (eq system-type 'android))
-  :ensure nil
   :bind ("M-`" . vterm-toggle)
   :custom
   (vterm-toggle-fullscreen-p nil)
