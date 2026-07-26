@@ -570,8 +570,10 @@
   :mode "\\.nix\\'")
 
 (use-package clojure-mode
-  :mode (("\\.clj\\'" . clojure-mode)
-         ("\\.edn\\'" . clojure-mode))
+  :mode (("\\.clj\\'"  . clojure-mode)
+         ("\\.cljs\\'" . clojurescript-mode)
+         ("\\.cljc\\'" . clojurec-mode)
+         ("\\.edn\\'"  . clojure-mode))
   :hook
   ((clojure-mode . subword-mode)
    (clojure-mode . puni-mode)
@@ -579,16 +581,26 @@
 
 (use-package cider
   :hook ((clojure-mode . cider-mode)
-         (cider-repl-mode . puni-mode))
+         (cider-repl-mode . puni-mode)
+         (cider-repl-mode . corfu-mode))
   :bind (:map cider-mode-map
-              ("C-c u" . cider-user-ns)
+              ("C-c u"   . cider-user-ns)
+              ("C-c C-r" . cider-ns-refresh)
               :map cider-repl-mode-map
               ("C-c M-o" . cider-repl-clear-buffer))
   :custom
+  (nrepl-use-ssh-fallback-for-remote-hosts t)
   (cider-preferred-build-tool 'clojure-cli)
   (cider-enrich-classpath t)
   (cider-repl-display-help-banner nil)
-  (cider-repl-pop-to-buffer-on-connect 'display-only))
+  (cider-repl-pop-to-buffer-on-connect 'display-only)
+  (cider-save-file-on-load t)
+  (cider-auto-select-error-buffer nil)
+  (cider-show-error-buffer 'only-in-repl)
+  (cider-font-lock-dynamically '(macro core function var))
+  (cider-repl-history-file (no-littering-expand-var-file-name "cider-history"))
+  (cider-repl-wrap-history t)
+  (cider-repl-use-pretty-printing t))
 
 (use-package gptel
   :bind (("C-c g" . gptel)
