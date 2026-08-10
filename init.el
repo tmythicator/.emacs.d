@@ -164,10 +164,23 @@
   :commands shrink-whitespace
   :bind ("C-c DEL" . shrink-whitespace))
 
-(use-package catppuccin-theme
+(setq custom-safe-themes t)
+
+(use-package doom-themes
+  :demand t
   :config
-  (load-theme 'catppuccin :no-confirm)
-  (setq catppuccin-flavor 'mocha))
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (doom-themes-visual-bell-config)
+  (doom-themes-org-config))
+
+(use-package auto-dark
+  :after doom-themes
+  :demand t
+  :custom
+  (auto-dark-themes '((doom-solarized-dark) (doom-solarized-light)))
+  :init
+  (auto-dark-mode 1))
 
 (use-package doom-modeline :hook (after-init . doom-modeline-mode))
 (use-package nerd-icons :if (display-graphic-p))
