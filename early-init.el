@@ -9,7 +9,7 @@
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars) default-frame-alist))
-(push '(alpha . (95 . 75)) default-frame-alist)
+(push '(alpha-background . 95) default-frame-alist)
 (when (eq system-type 'gnu/linux)
   (push '(undecorated . t) default-frame-alist))
 (setq package-enable-at-startup nil)
@@ -17,4 +17,6 @@
 
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-message t)
+
 (provide 'early-init)
+;;; early-init.el ends here
