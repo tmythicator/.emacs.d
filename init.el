@@ -615,6 +615,18 @@
   (cider-repl-wrap-history t)
   (cider-repl-use-pretty-printing t))
 
+(use-package racket-mode
+  :mode (("\\.rkt\\'" . racket-mode)
+         ("\\.scm\\'" . racket-mode))
+  :hook
+  ((racket-mode . racket-xp-mode)
+   (racket-mode . puni-mode)
+   (racket-repl-mode . puni-mode)
+   (racket-repl-mode . corfu-mode))
+  :bind (:map racket-mode-map
+              ("C-x C-e" . racket-send-last-sexp)
+              ("C-c C-z" . racket-repl)))
+
 (use-package gptel
   :bind (("C-c g" . gptel)
          ("C-c G" . gptel-menu)
