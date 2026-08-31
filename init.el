@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
@@ -174,13 +175,20 @@
   (doom-themes-visual-bell-config)
   (doom-themes-org-config))
 
-(use-package auto-dark
-  :after doom-themes
-  :demand t
-  :custom
-  (auto-dark-themes '((doom-solarized-dark) (doom-solarized-light)))
-  :init
-  (auto-dark-mode 1))
+(if (eq system-type 'darwin)
+    (progn
+      (add-hook 'ns-system-appearance-change-functions
+                (lambda (mode)
+                  (mapc #'disable-theme custom-enabled-themes)
+                  (load-theme (if (eq mode 'light) 'doom-solarized-light 'doom-solarized-dark) t)))
+      (load-theme (if (eq (bound-and-true-p ns-system-appearance) 'light)
+                      'doom-solarized-light
+                    'doom-solarized-dark) t))
+  (use-package auto-dark
+    :after doom-themes
+    :demand t
+    :custom (auto-dark-themes '((doom-solarized-dark) (doom-solarized-light)))
+    :init (auto-dark-mode 1)))
 
 (use-package doom-modeline :hook (after-init . doom-modeline-mode))
 (use-package nerd-icons :if (display-graphic-p))
