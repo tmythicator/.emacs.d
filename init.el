@@ -71,6 +71,7 @@
           (js-mode         . js-ts-mode)
           (json-mode       . json-ts-mode)
           (python-mode     . python-ts-mode)
+          (rust-mode       . rust-ts-mode)
           (yaml-mode       . yaml-ts-mode)))
 
   (dolist (mapping '(("\\.ts\\'"       . typescript-ts-mode)
@@ -81,7 +82,9 @@
                      ("\\.yml\\'"      . yaml-ts-mode)
                      ("Dockerfile\\'"  . dockerfile-ts-mode)
                      ("\\.go\\'"       . go-ts-mode)
-                     ("/go\\.mod\\'"   . go-mod-ts-mode)))
+                     ("/go\\.mod\\'"   . go-mod-ts-mode)
+                     ("\\.rs\\'"       . rust-ts-mode)
+                     ("flake\\.lock\\'" . nix-mode)))
     (add-to-list 'auto-mode-alist mapping))
 
   (put 'narrow-to-region 'disabled nil)
@@ -269,6 +272,19 @@
 (use-package embark-consult :after (embark consult))
 
 (use-package corfu
+  :init
+  ;; Fix Emacs 30 bug: Gnus faces mutually inherit (:inherit gnus-group-news-low[-empty]),
+  ;; which triggers an inheritance cycle error when creating child-frames for completion.
+  (custom-set-faces
+   '(gnus-group-news-low-empty ((t (:inherit nil :weight normal))))
+   '(gnus-group-news-low ((t (:inherit nil :weight bold))))
+   '(gnus-group-mail-low-empty ((t (:inherit nil :weight normal))))
+   '(gnus-group-mail-low ((t (:inherit nil :weight bold)))))
+  (with-eval-after-load 'gnus-group
+    (set-face-attribute 'gnus-group-news-low-empty nil :inherit nil)
+    (set-face-attribute 'gnus-group-news-low nil :inherit nil)
+    (set-face-attribute 'gnus-group-mail-low-empty nil :inherit nil)
+    (set-face-attribute 'gnus-group-mail-low nil :inherit nil))
   :custom
   (corfu-auto t)
   (corfu-auto-delay 0.05)
@@ -498,10 +514,8 @@
              (search category-keep))))
 
 (use-package org-atomic
-  :vc (org-atomic
-       :url "https://github.com/tmythicator/org-atomic"
-       :rev :newest)
-  :init (org-atomic-mode 1))
+  :load-path "~/Development/org-atomic"
+  :config (org-atomic-mode 1))
 
 (use-package org-present
   :bind (("<f9>" . org-present))
@@ -552,14 +566,23 @@
    (tsx-ts-mode . eglot-ensure)
    (js-ts-mode . eglot-ensure)
    (java-ts-mode . eglot-ensure)
-   (go-ts-mode . eglot-ensure))
+   (go-ts-mode . eglot-ensure)
+   (kotlin-mode . eglot-ensure)
+   (rust-mode . eglot-ensure)
+   (rust-ts-mode . eglot-ensure))
   :bind (:map eglot-mode-map
               ("C-c l f" . eglot-format-buffer)
               ("C-c l r" . eglot-rename)
               ("C-c l a" . eglot-code-actions)
               ("C-c l o" . eglot-code-action-organize-imports))
   :config
-  (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider))
+  (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider)
+  (add-to-list 'eglot-server-programs
+               '((kotlin-mode :language-id "kotlin")
+                 . ("kotlin-language-server")))
+  (setq-default eglot-workspace-configuration
+                '(:rust-analyzer
+                  (:check (:command "clippy")))))
 
 (use-package dumb-jump
   :custom (dumb-jump-selector 'completing-read)
@@ -575,20 +598,46 @@
 (use-package apheleia
   :bind ("C-c f" . apheleia-format-buffer)
   :config
+  (setf (alist-get 'ktlint apheleia-formatters)
+        '("ktlint" "--format" "--stdin"))
+  (setf (alist-get 'kotlin-mode apheleia-mode-alist) '(ktlint))
+  (setf (alist-get 'rust-mode apheleia-mode-alist) '(rustfmt))
+  (setf (alist-get 'rust-ts-mode apheleia-mode-alist) '(rustfmt))
   (apheleia-global-mode +1))
 
-(use-package kotlin-ts-mode
-  :vc (:url "https://github.com/emacsmirror/kotlin-ts-mode"
-            :rev :newest)
+(use-package kotlin-mode
   :mode "\\.kts?\\'"
-  :hook (kotlin-ts-mode . eglot-ensure)
-  :config
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs
-                 '(kotlin-ts-mode . ("kotlin-language-server")))))
+  :hook ((kotlin-mode . subword-mode)
+         (kotlin-mode . puni-mode)
+         (kotlin-mode . eglot-ensure)
+         (kotlin-mode . (lambda ()
+                          (setq-local indent-tabs-mode nil)
+                          (setq-local tab-width 4))))
+  :custom
+  (kotlin-tab-width 4))
+
+(use-package rust-mode
+  :mode "\\.rs\\'"
+  :hook ((rust-mode . subword-mode)
+         (rust-mode . puni-mode)
+         (rust-mode . eglot-ensure))
+  :custom
+  (rust-format-on-save nil))
+
+(use-package rust-ts-mode
+  :ensure nil
+  :hook ((rust-ts-mode . subword-mode)
+         (rust-ts-mode . puni-mode)
+         (rust-ts-mode . (lambda ()
+                           (remove-hook 'flymake-diagnostic-functions #'rust-ts-flymake t)))))
+
+(use-package cargo
+  :hook ((rust-mode . cargo-minor-mode)
+         (rust-ts-mode . cargo-minor-mode)))
 
 (use-package nix-mode
-  :mode "\\.nix\\'")
+  :mode (("\\.nix\\'"       . nix-mode)
+         ("flake\\.lock\\'" . nix-mode)))
 
 (use-package clojure-mode
   :mode (("\\.clj\\'"  . clojure-mode)
