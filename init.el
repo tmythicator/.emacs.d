@@ -292,6 +292,15 @@
   :config
   (global-corfu-mode 1))
 
+(use-package corfu-popupinfo
+  :ensure nil
+  :after corfu
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :custom
+  (corfu-popupinfo-delay '(0.25 . 0.1))
+  (corfu-popupinfo-max-width 70)
+  (corfu-popupinfo-max-height 20))
+
 (use-package cape
   :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
