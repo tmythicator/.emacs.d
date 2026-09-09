@@ -12,7 +12,8 @@
 (unless (eq system-type 'android)
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
-  (push '(vertical-scroll-bars) default-frame-alist))
+  (push '(vertical-scroll-bars . nil) default-frame-alist)
+  (push '(horizontal-scroll-bars . nil) default-frame-alist))
 
 ;; Fonts
 (push '(font . "JetBrainsMono Nerd Font-11") default-frame-alist)
