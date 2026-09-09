@@ -201,6 +201,7 @@
     :init (auto-dark-mode 1)))
 
 (use-package doom-modeline :hook (after-init . doom-modeline-mode))
+(use-package breadcrumb :config (breadcrumb-mode 1))
 (use-package nerd-icons :if (display-graphic-p))
 
 (use-package dashboard
