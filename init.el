@@ -117,13 +117,6 @@
   (defun duplicate-line () (interactive)
          (let ((col (current-column))) (move-beginning-of-line 1) (kill-line) (yank) (newline) (yank) (move-to-column col))))
 
-(use-package treesit-auto
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode 1))
-
 (use-package so-long :ensure nil :config (global-so-long-mode 1) :custom (so-long-threshold 4000))
 (use-package autorevert :ensure nil :init (global-auto-revert-mode 1) :custom (auto-revert-verbose nil))
 (use-package files
@@ -201,7 +194,6 @@
     :init (auto-dark-mode 1)))
 
 (use-package doom-modeline :hook (after-init . doom-modeline-mode))
-(use-package breadcrumb :config (breadcrumb-mode 1))
 (use-package nerd-icons :if (display-graphic-p))
 
 (use-package dashboard
