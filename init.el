@@ -24,7 +24,11 @@
   (setq touch-screen-display-keyboard t))
 
 ;; Core system integrations
-(use-package envrc :hook (after-init . envrc-global-mode))
+(use-package envrc
+  :demand t
+  :init
+  (defvar envrc-mode--set-explicitly nil)
+  :hook (after-init . envrc-global-mode))
 
 (use-package exec-path-from-shell
   :if (memq system-type '(gnu/linux darwin))
