@@ -31,7 +31,7 @@
   :hook (after-init . envrc-global-mode))
 
 (use-package exec-path-from-shell
-  :if (memq system-type '(gnu/linux darwin))
+  :if (eq system-type 'darwin)
   :init (exec-path-from-shell-initialize)
   :custom
   (exec-path-from-shell-variables '("PATH" "SHELL" "MANPATH"))
@@ -212,6 +212,7 @@
                      (projects . 5) (agenda . 10))))
 
 (use-package which-key
+  :ensure nil
   :init (which-key-mode)
   :custom (which-key-idle-delay 0.3))
 
@@ -407,7 +408,7 @@
 (use-package eshell
   :ensure nil
   :hook (eshell-mode . (lambda ()
-                         (eshell/alias "update" "sudo nixos-rebuild switch --flake ~/Development/nixos-config#nixos-rog")
+                         (eshell/alias "update" "sudo nixos-rebuild switch --flake ~/Development/nixos-config#sff-icient")
                          (eshell/alias "upgrade" "nix flake update --flake ~/Development/nixos-config && update")
                          (eshell/alias "gc" "nix-collect-garbage -d")))
   :custom
@@ -417,21 +418,6 @@
   :config
   (setq eshell-visual-commands
         '("htop" "top" "less" "more" "ssh" "tmux" "docker-compose" "node" "ipython" "pip" "pipenv")))
-
-(use-package vterm
-  :if (not (eq system-type 'android))
-  :commands vterm
-  :bind (:map vterm-mode-map
-              ("C-c C-y" . vterm-copy-mode))
-  :custom
-  (vterm-max-scrollback 10000))
-
-(use-package vterm-toggle
-  :if (not (eq system-type 'android))
-  :bind ("M-`" . vterm-toggle)
-  :custom
-  (vterm-toggle-fullscreen-p nil)
-  (vterm-toggle-scope 'project))
 
 (use-package ghostel
   :if (not (eq system-type 'android))
