@@ -433,6 +433,20 @@
   (vterm-toggle-fullscreen-p nil)
   (vterm-toggle-scope 'project))
 
+(use-package ghostel
+  :if (not (eq system-type 'android))
+  :commands (ghostel ghostel-project)
+  :bind (("C-c t" . ghostel)
+         ("C-c T" . ghostel-project)
+         :map ghostel-semi-char-mode-map
+         ("C-c C-t" . ghostel-toggle-char-mode)
+         ("C-y" . ghostel-paste)
+         ("M-y" . ghostel-paste-pop))
+  :custom
+  (ghostel-scrollback-limit 10000)
+  :hook
+  (ghostel-mode . ghostel-status-indicator-mode))
+
 (use-package ansi-color :defer t)
 (use-package compile
   :ensure nil
@@ -696,18 +710,6 @@
   :bind (:map racket-mode-map
               ("C-x C-e" . racket-send-last-sexp)
               ("C-c C-z" . racket-repl)))
-
-(use-package gptel
-  :bind (("C-c g" . gptel)
-         ("C-c G" . gptel-menu)
-         ("C-c r" . gptel-rewrite))
-  :config
-  (setq gptel-default-mode 'org-mode
-        gptel-model 'ornith:9b
-        gptel-backend (gptel-make-ollama "Ollama"
-                        :host "localhost:11434"
-                        :stream t
-                        :models '(ornith:9b))))
 
 
 (use-package vlf
